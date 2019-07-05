@@ -16,7 +16,7 @@
                 "STM32F10X_HD",
                 "USE_STDPERIPH_DRIVER"
             ],
-            "compilerPath": "G:\\Program Files\\LLVM\\bin\\gcc.exe",
+            "compilerPath": "X:/xxxx/gcc.exe",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"
