@@ -22,6 +22,7 @@ void GPIO_Config(void);
   */
 int main(void)
 {
+	uint8_t n;
 	SysTick_Config(SystemCoreClock / 1000);
 
 	GPIO_Config();
@@ -29,7 +30,8 @@ int main(void)
 	//Hardware
 	Servo_Config();
 	Servo_Ch(TIM8, 1) = 1400;
-	Uart_Config(USART2, 115200, ENABLE);
+	Uart_Config(USART2, 9600, DISABLE);
+	printf("\r\n");
 
 	/* Infinite loop */
 	while (1)
@@ -39,6 +41,7 @@ int main(void)
 			Clock_LED = 500;
 			GPIOC->ODR ^= GPIO_ODR_ODR13;
 			Servo_Ch(TIM8, 1) += (1500 - Servo_Ch(TIM8, 1)) * 2;
+			printf("ADC:%3d\r\n",n++);
 		}
 	}
 }
