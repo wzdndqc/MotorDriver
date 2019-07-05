@@ -1,14 +1,14 @@
 /*
 Uart Driver And BlueTooth Electronics
 
-Hardware res:
+IO res:
 
 USART2_TX : PA2
 USART2_RX : PA3
 USART3_TX : PC10
 USART3_RX : PC11
 
-Software res:
+Hardware res:
 
 USART2
 USART3

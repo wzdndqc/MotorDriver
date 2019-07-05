@@ -1,7 +1,7 @@
 /*
 DC Motor Driver
 
-Hardware res:
+IO res:
 
 M1_PWM: PA8
 M1_EA : PA15
@@ -27,7 +27,7 @@ M4_EB : PA1
 M4_N1 : PC2
 M4_N2 : PC3
 
-Software res:
+Hardware res:
 
 PWM_OUT : TIM1_CH1~CH4
 
@@ -94,7 +94,6 @@ GPIOA GPIOB GPIOC GPIOD
 //Fun
 void Motor_Config(void);
 void Motor_Output(uint8_t index,int16_t pwm);
-void Motor_SetSpeed(uint8_t index,int16_t speed);
-void Motor_SetPID(void);//Test
+int16_t Motor_GetStep(uint8_t index); //Get step from TIM2/3/4/5
 
 #endif

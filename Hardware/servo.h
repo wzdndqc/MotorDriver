@@ -1,7 +1,7 @@
 /*
 Servo Driver
 
-Hardware res:
+IO res:
 
 T1_1 : PA8
 T1_2 : PA9
@@ -12,7 +12,7 @@ T8_2 : PC7
 T8_3 : PC8
 T8_4 : PC9
 
-Software res:
+Hardware res:
 
 T1 : TIM1
 T8 : TIM8
