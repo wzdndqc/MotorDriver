@@ -27,4 +27,8 @@ Libraries
 
 在.vscode文件夹下复制粘贴c_cpp_properties copy.json并重命名为c_cpp_properties.json，修改"compilerPath"参数为本地gcc编译器。
 
+## 使用工程
+
+详细的板上IO分配及硬件驱动描述参考[Hardware](Hardware/README.md)。
+
 Create by ChnTamap 2019.7.5
