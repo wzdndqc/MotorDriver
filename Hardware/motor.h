@@ -1,43 +1,46 @@
 /*
-DC Motor Driver
-
-IO res:
-
-M1_PWM: PA8
-M1_EA : PA15
-M1_EB : PB3
-M1_N1 : PC12
-M1_N2 : PD2
-
-M2_PWM: PA9
-M2_EA : PA6
-M2_EB : PA7
-M2_N1 : PB4
-M2_N2 : PB5
-
-M3_PWM: PA10
-M3_EA : PB6
-M3_EB : PB7
-M3_N1 : PC0
-M3_N2 : PC1
-
-M4_PWM: PA11
-M4_EA : PA0
-M4_EB : PA1
-M4_N1 : PC2
-M4_N2 : PC3
-
-Hardware res:
-
-PWM_OUT : TIM1_CH1~CH4
-
-ENCODE1 : TIM2_CH1~CH2
-ENCODE2 : TIM3_CH1~CH2
-ENCODE3 : TIM4_CH1~CH2
-ENCODE4 : TIM5_CH1~CH2
-
-GPIOA GPIOB GPIOC GPIOD
-*/
+ * @file	motor.h
+ * @auther	Tamap
+ * @brief	DC Motor Driver
+ * @date	2019-7-16
+ * 
+ * IO res:
+ * 
+ * M1_PWM: PA8
+ * M1_EA : PA15
+ * M1_EB : PB3
+ * M1_N1 : PC12
+ * M1_N2 : PD2
+ * 
+ * M2_PWM: PA9
+ * M2_EA : PA6
+ * M2_EB : PA7
+ * M2_N1 : PB4
+ * M2_N2 : PB5
+ * 
+ * M3_PWM: PA10
+ * M3_EA : PB6
+ * M3_EB : PB7
+ * M3_N1 : PC0
+ * M3_N2 : PC1
+ * 
+ * M4_PWM: PA11
+ * M4_EA : PA0
+ * M4_EB : PA1
+ * M4_N1 : PC2
+ * M4_N2 : PC3
+ * 
+ * Hardware res:
+ * 
+ * PWM_OUT : TIM1_CH1~CH4
+ * 
+ * ENCODE1 : TIM2_CH1~CH2
+ * ENCODE2 : TIM3_CH1~CH2
+ * ENCODE3 : TIM4_CH1~CH2
+ * ENCODE4 : TIM5_CH1~CH2
+ * 
+ * GPIOA GPIOB GPIOC GPIOD
+ */
 #ifndef _MOTOR_H_
 #define _MOTOR_H_
 
@@ -55,6 +58,7 @@ GPIOA GPIOB GPIOC GPIOD
 #define  PIN_M1_N1 GPIO_Pin_12
 #define GPIO_M1_N2 GPIOD
 #define  PIN_M1_N2 GPIO_Pin_2
+#define  TIM_M1_ENCODE TIM2
 
 #define GPIO_M2_PWM GPIOA
 #define  PIN_M2_PWM GPIO_Pin_9
@@ -66,6 +70,7 @@ GPIOA GPIOB GPIOC GPIOD
 #define  PIN_M2_N1 GPIO_Pin_4
 #define GPIO_M2_N2 GPIOB
 #define  PIN_M2_N2 GPIO_Pin_5
+#define  TIM_M2_ENCODE TIM3
 
 #define GPIO_M3_PWM GPIOA
 #define  PIN_M3_PWM GPIO_Pin_10
@@ -77,6 +82,7 @@ GPIOA GPIOB GPIOC GPIOD
 #define  PIN_M3_N1 GPIO_Pin_0
 #define GPIO_M3_N2 GPIOC
 #define  PIN_M3_N2 GPIO_Pin_1
+#define  TIM_M3_ENCODE TIM4
 
 #define GPIO_M4_PWM GPIOA
 #define  PIN_M4_PWM GPIO_Pin_11
@@ -88,12 +94,34 @@ GPIOA GPIOB GPIOC GPIOD
 #define  PIN_M4_N1 GPIO_Pin_2
 #define GPIO_M4_N2 GPIOC
 #define  PIN_M4_N2 GPIO_Pin_3
+#define  TIM_M4_ENCODE TIM5
 
 //Var
 
 //Fun
+/* 
+ * @brie	Init TIM1~5 and GPIO for TB6612FNG and Encode driver
+ */
 void Motor_Config(void);
+/*
+ * @brief	Set duty cycle of pwm output
+ * 
+ * @param[in] index	Index of motor:
+ * 	- 1~4
+ * @param[in] pwm	Duty cycle of pwm output, negative means reverse.
+ */
 void Motor_Output(uint8_t index,int16_t pwm);
-int16_t Motor_GetStep(uint8_t index); //Get step from TIM2/3/4/5
+/*
+ * @brief Get step number of encoder form TIM2/3/4/5
+ * 
+ * @param[in] index	Index of motor:
+ * 	- 1~4
+ * @return step number of encoder
+ * @par	Example:
+ * @code
+ * 	step = Motor_GetStep(1);
+ * @endcode
+ */
+uint16_t Motor_GetStep(uint8_t index);
 
 #endif
