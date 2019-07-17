@@ -22,4 +22,5 @@ void Motor_Config(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
 }
 void Motor_Output(uint8_t index, int16_t pwm);
+void Motor_Stop(void);
 uint16_t Motor_GetStep(uint8_t index);

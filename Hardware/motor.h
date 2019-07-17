@@ -104,6 +104,10 @@
  */
 void Motor_Config(void);
 /*
+ * @brief	Set motor state to Stop:OFF(High impedance)
+ */
+void Motor_Stop(void);
+/*
  * @brief	Set duty cycle of pwm output
  * 
  * @param[in] index	Index of motor:
