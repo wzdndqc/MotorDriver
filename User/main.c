@@ -2,6 +2,7 @@
 #include "stm32f10x.h"
 #include "servo.h"
 #include "uart.h"
+#include "motor.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -22,7 +23,7 @@ void GPIO_Config(void);
   */
 int main(void)
 {
-	uint8_t n;
+	uint8_t n = 0;
 	SysTick_Config(SystemCoreClock / 1000);
 
 	GPIO_Config();
@@ -33,6 +34,11 @@ int main(void)
 	Uart_Config(USART2, 9600, DISABLE);
 	printf("\r\n");
 
+	//Test
+	Motor_Config();
+	Motor_Output(2, -10000);
+	Clock_LED = 3000;
+
 	/* Infinite loop */
 	while (1)
 	{
@@ -41,7 +47,13 @@ int main(void)
 			Clock_LED = 500;
 			GPIOC->ODR ^= GPIO_ODR_ODR13;
 			Servo_Ch(TIM8, 1) += (1500 - Servo_Ch(TIM8, 1)) * 2;
-			printf("ADC:%3d\r\n",n++);
+			printf("ADC:%3d\r\n", n);
+			//Test
+			// Motor_Output(2, ((int16_t)((n > 30)?60-n:n) - 15)*500);
+			Motor_Output(2, 0);
+			n++;
+			if (n > 60)
+				n = 0;
 		}
 	}
 }
