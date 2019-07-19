@@ -90,6 +90,28 @@ void main(void)
 	while(1);
 }
 ```
+以下是设定电机M2为自由停车（外部控制），同时读取编码器返回值的程序：
+
+```
+uint16_t value_M2_encoder;
+void main(void)
+{
+	//初始化
+	Motor_Config();
+	Motor_Encoder_Config();
+
+	//转速设置
+	Motor_Output(2, 0);
+	Motor_Stop(2);
+
+	//死循环
+	while(1)
+	{
+		//获取编码器值
+		value_M2_encoder = Motor_GetStep(2);
+	}
+}
+```
 
 # 舵机驱动-servo
 

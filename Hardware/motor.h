@@ -104,9 +104,13 @@
 
 //Fun
 /* 
- * @brief	Init TIM1~5 and GPIO for TB6612FNG and Encode driver
+ * @brief	Init TIM1~5 and GPIO for TB6612FNG driver
  */
 void Motor_Config(void);
+/* 
+ * @brief	Init TIM2~5 and GPIO for Encode of motor.
+ */
+void Motor_Encoder_Config(void);
 /*
  * @brief	Set motor state to Stop:OFF(High impedance)
  * 
@@ -127,13 +131,12 @@ void Motor_Output(uint8_t index,int16_t pwm);
  * 
  * @param[in] index	Index of motor:
  * 	- 1~4
- * @return step number of encoder
+ * @retval step number of encoder
  * @par	Example:
  * @code
  * 	step = Motor_GetStep(1);
  * @endcode
  */
 uint16_t Motor_GetStep(uint8_t index);
-void Motor_Encoder_Config(void);
 
 #endif

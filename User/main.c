@@ -27,7 +27,6 @@ int main(void)
 	SysTick_Config(SystemCoreClock / 1000);
 
 	GPIO_Config();
-	Encoder_Init_TIM2();
 
 	//Hardware
 	Servo_Config();
@@ -37,6 +36,7 @@ int main(void)
 
 	//Test
 	Motor_Config();
+	Motor_Encoder_Config();
 	Motor_Output(2, 0);
 	Motor_Stop(2);
 	//Clock_LED = 3000;
@@ -49,7 +49,7 @@ int main(void)
 			Clock_LED = 500;
 			GPIOC->ODR ^= GPIO_ODR_ODR13;
 			Servo_Ch(TIM8, 1) += (1500 - Servo_Ch(TIM8, 1)) * 2;
-			printf("%d\n",Read_Encoder(3));
+			printf("%d\n",Motor_GetStep(2));
 			//printf("ADC:%3d\r\n", n);
 			//Test
 			// Motor_Output(2, ((int16_t)((n > 30)?60-n:n) - 15)*500);
