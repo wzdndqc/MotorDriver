@@ -130,5 +130,6 @@ void Motor_Output(uint8_t index,int16_t pwm);
  * @endcode
  */
 uint16_t Motor_GetStep(uint8_t index);
+void Motor_Encoder_Config(void);
 
 #endif
