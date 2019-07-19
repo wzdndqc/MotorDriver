@@ -56,7 +56,7 @@ void Motor_Config(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	//TIM Base : 1us Psc 20ms Per
-	TIM_TimeBaseStructure.TIM_Period = 20000 - 1;
+	TIM_TimeBaseStructure.TIM_Period = MOTOR_PERIOD - 1;
 	TIM_TimeBaseStructure.TIM_Prescaler = (SystemCoreClock / 1000000) - 1;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
