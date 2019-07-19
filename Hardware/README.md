@@ -68,6 +68,29 @@ PD2 | M1_N2 |
 
 [motor.c](./motor.c)
 
+## 例程
+
+以下是设定电机M1为正转50%转速，M2为反转50%转速, M3刹车，M4自由停车的程序：
+
+```
+void main(void)
+{
+	//初始化
+	Motor_Config();
+
+	//转速设置
+	Motor_Output(1, MOTOR_PERIOD / 2);	//M1
+	Motor_Output(2, -MOTOR_PERIOD / 2);	//M2
+	Motor_Output(3, 0);			//M3
+	//M4
+	Motor_Output(4, 0);
+	Motor_Stop(4);
+
+	//死循环
+	while(1);
+}
+```
+
 # 舵机驱动-servo
 
 ## 描述
