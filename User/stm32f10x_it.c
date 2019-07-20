@@ -23,6 +23,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
+#include "uart.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -135,8 +136,8 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-	if(Clock_LED)
-		Clock_LED--;
+  if (Clock_LED)
+    Clock_LED--;
 }
 
 /******************************************************************************/
@@ -145,6 +146,16 @@ void SysTick_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f10x_xx.s).                                            */
 /******************************************************************************/
+
+/**
+  * @brief  This function handles USARTy global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void USART2_IRQHandler(void)
+{
+  Uart_BufsHandler();
+}
 
 /**
   * @brief  This function handles PPP interrupt request.
@@ -157,7 +168,6 @@ void SysTick_Handler(void)
 
 /**
   * @}
-  */ 
-
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

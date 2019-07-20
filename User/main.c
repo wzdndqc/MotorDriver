@@ -9,6 +9,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 uint32_t Clock_LED = 0;
+char str[20];
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -22,7 +23,7 @@ void GPIO_Config(void);
   */
 int main(void)
 {
-	uint8_t n;
+	uint16_t n = 0;
 	SysTick_Config(SystemCoreClock / 1000);
 
 	GPIO_Config();
@@ -30,18 +31,18 @@ int main(void)
 	//Hardware
 	Servo_Config();
 	Servo_Ch(TIM8, 1) = 1400;
-	Uart_Config(USART2, 9600, DISABLE);
-	printf("\r\n");
+	Uart_Config(USART2, 9600);
 
 	/* Infinite loop */
 	while (1)
 	{
 		if (Clock_LED == 0)
 		{
-			Clock_LED = 500;
+			Clock_LED = 20;
 			GPIOC->ODR ^= GPIO_ODR_ODR13;
 			Servo_Ch(TIM8, 1) += (1500 - Servo_Ch(TIM8, 1)) * 2;
-			printf("ADC:%3d\r\n",n++);
+			sprintf(str, "BUG:%05d\r\n", n++);
+			Uart_SendString(str);
 		}
 	}
 }
