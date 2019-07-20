@@ -11,6 +11,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 uint32_t Clock_LED = 0;
+char str[20];
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -24,26 +25,15 @@ void GPIO_Config(void);
   */
 int main(void)
 {
-	uint8_t n = 0;
+	uint16_t n = 0;
 	SysTick_Config(SystemCoreClock / 1000);
 
 	GPIO_Config();
 
-
-
-/*  步进电机---------------------------------------------------------*/
-	Stemo_DIR_int();//步进电机IO初�?�化
-	Stemo_StepPri(10);//该参数为步进电机期望步数，用户自行修�?
-  	STEMO_DRI(); //步进电机�?�?服务函数，用户需要循�?调用
-
-	  
-/*  ---------------------------------------------------------*/
 	//Hardware
-
 	Servo_Config();
 	Servo_Ch(TIM8, 1) = 1400;
-	Uart_Config(USART2, 9600, DISABLE);
-	printf("\r\n");
+	Uart_Config(USART2, 115200);
 
 	//Test
 	Motor_Config();
@@ -57,14 +47,13 @@ int main(void)
 	{
 		if (Clock_LED == 0)
 		{
-			Clock_LED = 500;
+			Clock_LED = 20;
 			GPIOC->ODR ^= GPIO_ODR_ODR13;
 			Servo_Ch(TIM8, 1) += (1500 - Servo_Ch(TIM8, 1)) * 2;
-			printf("%d\n",Motor_GetStep(2));
-			//printf("ADC:%3d\r\n", n);
-			//Test
-			// Motor_Output(2, ((int16_t)((n > 30)?60-n:n) - 15)*500);
-			//Motor_Output(2, 0);
+			sprintf(str, "Motr:05%d\n",Motor_GetStep(2));
+			Uart_SendString(str);
+			sprintf(str, "BUG:%05d\r\n", n++);
+			Uart_SendString(str);
 			n++;
 			if (n > 60)
 				n = 0;

@@ -24,6 +24,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
 #include "Stemo.h"
+#include "uart.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -149,6 +150,16 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief  This function handles USARTy global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void USART2_IRQHandler(void)
+{
+  Uart_BufsHandler();
+}
+
+/**
   * @brief  This function handles PPP interrupt request.
   * @param  None
   * @retval None
@@ -159,7 +170,6 @@ void SysTick_Handler(void)
 
 /**
   * @}
-  */ 
-
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

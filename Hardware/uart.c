@@ -20,10 +20,13 @@ GPIOA GPIOC
 #include "uart.h"
 
 //Var
+uint16_t Uart_iHead = 0;
+uint16_t Uart_iTail = UART_BUFFER_SIZE - 1;
+uint8_t Uart_TxBufs[UART_BUFFER_SIZE];
+uint8_t *Uart_pRx = Uart_RxBufs;
 
 //Fun
-//Config Usart
-void Uart_Config(USART_TypeDef *usart, uint32_t baud, FunctionalState isIT)
+void Uart_Config(USART_TypeDef *usart, uint32_t baud)
 {
 	GPIO_InitTypeDef GPIO_InitStructureRx;
 	GPIO_InitTypeDef GPIO_InitStructureTx;
@@ -70,8 +73,7 @@ void Uart_Config(USART_TypeDef *usart, uint32_t baud, FunctionalState isIT)
 		GPIO_Init(GPIOC, &GPIO_InitStructureRx);
 		NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;
 	}
-	if (isIT == ENABLE)
-		NVIC_Init(&NVIC_InitStructure);
+	NVIC_Init(&NVIC_InitStructure);
 
 	//USART
 	USART_InitStructure.USART_BaudRate = baud;
@@ -81,10 +83,59 @@ void Uart_Config(USART_TypeDef *usart, uint32_t baud, FunctionalState isIT)
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 	USART_Init(usart, &USART_InitStructure);
-	USART_ITConfig(usart, USART_IT_RXNE, isIT);
-	USART_ITConfig(usart, USART_IT_TXE, isIT);
+	USART_ITConfig(usart, USART_IT_RXNE, ENABLE);
 	USART_Cmd(usart, ENABLE);
 	usart->SR;
+
+	//Init
+	Uart_RxBufs[0] = 0;
+}
+
+#define buffer_add(val) ((val >= UART_BUFFER_SIZE - 1) ? 0 : val + 1)
+ErrorStatus Uart_SendString(char *str)
+{
+	uint16_t iHead = Uart_iHead;
+	while (*str)
+	{
+		if (iHead != Uart_iTail)
+		{
+			Uart_TxBufs[iHead] = *(str++);
+			iHead = buffer_add(iHead);
+		}
+		else
+		{
+			return ERROR;
+		}
+	}
+	Uart_iHead = iHead;
+	USART_ITConfig(UART_BUFFER, USART_IT_TXE, ENABLE);
+	return SUCCESS;
+}
+
+void Uart_BufsHandler(void)
+{
+	if (UART_BUFFER->SR & USART_SR_TXE)
+	{
+		//判断缓冲区是否还有数据
+		if (buffer_add(Uart_iTail) != Uart_iHead)
+		{
+			Uart_iTail = buffer_add(Uart_iTail);
+			UART_BUFFER->DR = Uart_TxBufs[Uart_iTail];
+		}
+		else
+		{
+			USART_ITConfig(UART_BUFFER, USART_IT_TXE, DISABLE);
+		}
+	}
+	if (UART_BUFFER->SR & USART_SR_RXNE)
+	{
+		//接收
+		if (Uart_pRx - Uart_RxBufs < UART_BUFFER_SIZE)
+		{
+			*Uart_pRx = UART_BUFFER->DR;
+			*(Uart_pRx++) = 0;
+		}
+	}
 }
 
 PUTCHAR_PROTOTYPE
