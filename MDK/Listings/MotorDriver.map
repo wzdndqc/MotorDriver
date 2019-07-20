@@ -1,4 +1,4 @@
-Component: ARM Compiler 5.06 update 5 (build 528) Tool: armlink [4d35e2]
+Component: ARM Compiler 5.05 update 2 (build 169) Tool: armlink [4d0f33]
 
 ==============================================================================
 
@@ -156,6 +156,7 @@ Section Cross References
     main.o(i.main) refers to motor.o(i.Motor_GetStep) for Motor_GetStep
     main.o(i.main) refers to system_stm32f10x.o(.data) for SystemCoreClock
     main.o(i.main) refers to main.o(.data) for Clock_LED
+    stm32f10x_it.o(i.SysTick_Handler) refers to stemo.o(i.STEMO_DRI) for STEMO_DRI
     stm32f10x_it.o(i.SysTick_Handler) refers to main.o(.data) for Clock_LED
     system_stm32f10x.o(i.SetSysClock) refers to system_stm32f10x.o(i.SetSysClockTo72) for SetSysClockTo72
     system_stm32f10x.o(i.SystemCoreClockUpdate) refers to system_stm32f10x.o(.data) for SystemCoreClock
@@ -1045,10 +1046,11 @@ Image Symbol Table
     .data                                    0x20000000   Section       20  stm32f10x_rcc.o(.data)
     APBAHBPrescTable                         0x20000000   Data          16  stm32f10x_rcc.o(.data)
     ADCPrescTable                            0x20000010   Data           4  stm32f10x_rcc.o(.data)
-    .data                                    0x20000014   Section        4  main.o(.data)
-    .data                                    0x20000018   Section       20  system_stm32f10x.o(.data)
-    .data                                    0x2000002c   Section        4  stdout.o(.data)
-    STACK                                    0x20000030   Section     1024  startup_stm32f10x_hd.o(STACK)
+    .data                                    0x20000014   Section        4  stemo.o(.data)
+    .data                                    0x20000018   Section        4  main.o(.data)
+    .data                                    0x2000001c   Section       20  system_stm32f10x.o(.data)
+    .data                                    0x20000030   Section        4  stdout.o(.data)
+    STACK                                    0x20000038   Section     1024  startup_stm32f10x_hd.o(STACK)
 
     Global Symbols
 
@@ -1259,7 +1261,7 @@ Memory Map of the image
 
     Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00001978, Max: 0x00040000, ABSOLUTE)
 
-    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
     0x08000000   0x08000000   0x00000130   Data   RO            3    RESET               startup_stm32f10x_hd.o
     0x08000130   0x08000130   0x00000000   Code   RO         3282  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)
@@ -1356,7 +1358,7 @@ Memory Map of the image
 
     Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08001978, Size: 0x00000430, Max: 0x0000c000, ABSOLUTE)
 
-    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
     0x20000000   0x08001978   0x00000014   Data   RW         1704    .data               stm32f10x_rcc.o
     0x20000014   0x0800198c   0x00000004   Data   RW         3161    .data               main.o
@@ -1433,11 +1435,6 @@ Image component sizes
       6184        516        336         48       1024     313240   ELF Image Totals
       6184        516        336         48          0          0   ROM Totals
 
-==============================================================================
-
-    Total RO  Size (Code + RO Data)                 6520 (   6.37kB)
-    Total RW  Size (RW Data + ZI Data)              1072 (   1.05kB)
-    Total ROM Size (Code + RO Data + RW Data)       6568 (   6.41kB)
 
 ==============================================================================
 
