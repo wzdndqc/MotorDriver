@@ -2,6 +2,7 @@
 #include "stm32f10x.h"
 #include "servo.h"
 #include "uart.h"
+#include "Stemo.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -27,7 +28,17 @@ int main(void)
 
 	GPIO_Config();
 
+
+
+/*  步进电机---------------------------------------------------------*/
+	Stemo_DIR_int();//步进电机IO初始化
+	Stemo_StepPri(10);//该参数为步进电机期望步数，用户自行修改
+  	STEMO_DRI(); //步进电机循环服务函数，用户需要循环调用
+
+	  
+/*  ---------------------------------------------------------*/
 	//Hardware
+
 	Servo_Config();
 	Servo_Ch(TIM8, 1) = 1400;
 	Uart_Config(USART2, 9600, DISABLE);

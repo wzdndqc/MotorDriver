@@ -23,6 +23,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
+#include "Stemo.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -135,6 +136,7 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
+  STEMO_DRI();
 	if(Clock_LED)
 		Clock_LED--;
 }
