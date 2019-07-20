@@ -525,6 +525,11 @@
               <FileType>1</FileType>
               <FilePath>..\Hardware\uart.c</FilePath>
             </File>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\motor.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

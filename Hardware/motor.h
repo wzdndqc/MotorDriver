@@ -97,12 +97,27 @@
 #define  TIM_M4_ENCODE TIM5
 
 //Var
+/* 
+ * @brief	Period(ms) of pwm output to motor
+ */
+#define MOTOR_PERIOD 20000
 
 //Fun
 /* 
- * @brie	Init TIM1~5 and GPIO for TB6612FNG and Encode driver
+ * @brief	Init TIM1~5 and GPIO for TB6612FNG driver
  */
 void Motor_Config(void);
+/* 
+ * @brief	Init TIM2~5 and GPIO for Encode of motor.
+ */
+void Motor_Encoder_Config(void);
+/*
+ * @brief	Set motor state to Stop:OFF(High impedance)
+ * 
+ * @param[in] index	Index of motor:
+ * 	- 1~4
+ */
+void Motor_Stop(uint8_t index);
 /*
  * @brief	Set duty cycle of pwm output
  * 
@@ -116,7 +131,7 @@ void Motor_Output(uint8_t index,int16_t pwm);
  * 
  * @param[in] index	Index of motor:
  * 	- 1~4
- * @return step number of encoder
+ * @retval step number of encoder
  * @par	Example:
  * @code
  * 	step = Motor_GetStep(1);
