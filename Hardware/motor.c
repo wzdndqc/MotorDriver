@@ -56,6 +56,7 @@ void Motor_Config(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	//TIM Base : 1us Psc 20ms Per
+	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
 	TIM_TimeBaseStructure.TIM_Period = MOTOR_PERIOD - 1;
 	TIM_TimeBaseStructure.TIM_Prescaler = (SystemCoreClock / 1000000) - 1;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
@@ -185,24 +186,24 @@ void Motor_Encoder_Config(void)
 
 	//M1
 	GPIO_InitStructure.GPIO_Pin = PIN_M1_EA;
-	GPIO_Init(GPIO_M1_N1, &GPIO_InitStructure);
+	GPIO_Init(GPIO_M1_EA, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = PIN_M1_EB;
-	GPIO_Init(GPIO_M1_N2, &GPIO_InitStructure);
+	GPIO_Init(GPIO_M1_EB, &GPIO_InitStructure);
 	//M2
 	GPIO_InitStructure.GPIO_Pin = PIN_M2_EA;
-	GPIO_Init(GPIO_M2_N1, &GPIO_InitStructure);
+	GPIO_Init(GPIO_M2_EA, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = PIN_M2_EB;
-	GPIO_Init(GPIO_M2_N2, &GPIO_InitStructure);
+	GPIO_Init(GPIO_M2_EB, &GPIO_InitStructure);
 	//M3
 	GPIO_InitStructure.GPIO_Pin = PIN_M3_EA;
-	GPIO_Init(GPIO_M3_N1, &GPIO_InitStructure);
+	GPIO_Init(GPIO_M3_EA, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = PIN_M3_EB;
-	GPIO_Init(GPIO_M3_N2, &GPIO_InitStructure);
+	GPIO_Init(GPIO_M3_EB, &GPIO_InitStructure);
 	//M4
 	GPIO_InitStructure.GPIO_Pin = PIN_M4_EA;
-	GPIO_Init(GPIO_M4_N1, &GPIO_InitStructure);
+	GPIO_Init(GPIO_M4_EA, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = PIN_M4_EB;
-	GPIO_Init(GPIO_M4_N2, &GPIO_InitStructure);
+	GPIO_Init(GPIO_M4_EB, &GPIO_InitStructure);
 
 	//编码器
 	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);

@@ -30,6 +30,7 @@ void Servo_ConfigT8(void)
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 	//TIM Base : 1us Psc 20ms Per
+	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
 	TIM_TimeBaseStructure.TIM_Period = 20000 - 1;
 	TIM_TimeBaseStructure.TIM_Prescaler = (SystemCoreClock / 1000000) - 1;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
@@ -77,6 +78,7 @@ void Servo_ConfigT1(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	//TIM Base : 1us Psc 20ms Per
+	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
 	TIM_TimeBaseStructure.TIM_Period = 20000 - 1;
 	TIM_TimeBaseStructure.TIM_Prescaler = (SystemCoreClock / 1000000) - 1;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;

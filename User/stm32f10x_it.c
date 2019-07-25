@@ -25,6 +25,7 @@
 #include "stm32f10x_it.h"
 #include "Stemo.h"
 #include "uart.h"
+#include "Driver/JY61.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -35,6 +36,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 extern uint32_t Clock_LED;
+extern uint32_t Clock_Mtr;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -137,9 +139,11 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-  STEMO_DRI();
+  Stemo_Loop();
 	if(Clock_LED)
 		Clock_LED--;
+	if(Clock_Mtr)
+		Clock_Mtr--;
 }
 
 /******************************************************************************/
@@ -157,6 +161,19 @@ void SysTick_Handler(void)
 void USART2_IRQHandler(void)
 {
   Uart_BufsHandler();
+}
+
+/**
+  * @brief  This function handles USARTy global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void USART3_IRQHandler(void)
+{
+  if(USART3->SR & USART_SR_RXNE)
+	{
+		JY61_RxData(USART3->DR);
+	}
 }
 
 /**

@@ -1,8 +1,8 @@
-<center><h1>°åÔØÓ²¼þÇý¶¯</h1></center>
+<center><h1>æ¿è½½ç¡¬ä»¶é©±åŠ¨</h1></center>
 
-# IO·ÖÅä±í
+# IOåˆ†é…è¡¨
 
-IO | ¹¦ÄÜ1 | ¹¦ÄÜ2 | ±¸×¢
+IO | åŠŸèƒ½1 | åŠŸèƒ½2 | å¤‡æ³¨
 -|-|-|-
 PA0 | M4_EA ||
 PA1 | M4_EB ||
@@ -56,29 +56,29 @@ PD0 | OSC_IN ||
 PD1 | OSC_OUT ||
 PD2 | M1_N2 ||
 
-# µç»úÇý¶¯-motor
+# ç”µæœºé©±åŠ¨-motor
 
-## ÃèÊö
+## æè¿°
 
-´øÕý½»±àÂëÆ÷Ö±Á÷¼õËÙµç»úµÄÇý¶¯£¬¹²4¸öµç»ú¡£
+å¸¦æ­£äº¤ç¼–ç å™¨ç›´æµå‡é€Ÿç”µæœºçš„é©±åŠ¨ï¼Œå…±4ä¸ªç”µæœºã€‚
 
-## ÎÄ¼þ
+## æ–‡ä»¶
 
 [motor.h](./motor.h)
 
 [motor.c](./motor.c)
 
-## Àý³Ì
+## ä¾‹ç¨‹
 
-ÒÔÏÂÊÇÉè¶¨µç»úM1ÎªÕý×ª50%×ªËÙ£¬M2Îª·´×ª50%×ªËÙ, M3É²³µ£¬M4×ÔÓÉÍ£³µµÄ³ÌÐò£º
+ä»¥ä¸‹æ˜¯è®¾å®šç”µæœºM1ä¸ºæ­£è½¬50%è½¬é€Ÿï¼ŒM2ä¸ºåè½¬50%è½¬é€Ÿ, M3åˆ¹è½¦ï¼ŒM4è‡ªç”±åœè½¦çš„ç¨‹åºï¼š
 
 ```
 void main(void)
 {
-	//³õÊ¼»¯
+	//åˆå§‹åŒ–
 	Motor_Config();
 
-	//×ªËÙÉèÖÃ
+	//è½¬é€Ÿè®¾ç½®
 	Motor_Output(1, MOTOR_PERIOD / 2);	//M1
 	Motor_Output(2, -MOTOR_PERIOD / 2);	//M2
 	Motor_Output(3, 0);			//M3
@@ -86,89 +86,89 @@ void main(void)
 	Motor_Output(4, 0);
 	Motor_Stop(4);
 
-	//ËÀÑ­»·
+	//æ­»å¾ªçŽ¯
 	while(1);
 }
 ```
-ÒÔÏÂÊÇÉè¶¨µç»úM2Îª×ÔÓÉÍ£³µ£¨Íâ²¿¿ØÖÆ£©£¬Í¬Ê±¶ÁÈ¡±àÂëÆ÷·µ»ØÖµµÄ³ÌÐò£º
+ä»¥ä¸‹æ˜¯è®¾å®šç”µæœºM2ä¸ºè‡ªç”±åœè½¦ï¼ˆå¤–éƒ¨æŽ§åˆ¶ï¼‰ï¼ŒåŒæ—¶è¯»å–ç¼–ç å™¨è¿”å›žå€¼çš„ç¨‹åºï¼š
 
 ```
 uint16_t value_M2_encoder;
 void main(void)
 {
-	//³õÊ¼»¯
+	//åˆå§‹åŒ–
 	Motor_Config();
 	Motor_Encoder_Config();
 
-	//×ªËÙÉèÖÃ
+	//è½¬é€Ÿè®¾ç½®
 	Motor_Output(2, 0);
 	Motor_Stop(2);
 
-	//ËÀÑ­»·
+	//æ­»å¾ªçŽ¯
 	while(1)
 	{
-		//»ñÈ¡±àÂëÆ÷Öµ
+		//èŽ·å–ç¼–ç å™¨å€¼
 		value_M2_encoder = Motor_GetStep(2);
 	}
 }
 ```
 
-# ¶æ»úÇý¶¯-servo
+# èˆµæœºé©±åŠ¨-servo
 
-## ÃèÊö
+## æè¿°
 
-8Â·PWM¶æ»ú¿ØÖÆÇý¶¯¡£TIM8Êä³ö4Â·£¬µ±²»ÐèÒªµç»úÇý¶¯Ê±¿ÉÓÃTIM1¿ØÖÆÁíÍâ4Â·¡£
+8è·¯PWMèˆµæœºæŽ§åˆ¶é©±åŠ¨ã€‚TIM8è¾“å‡º4è·¯ï¼Œå½“ä¸éœ€è¦ç”µæœºé©±åŠ¨æ—¶å¯ç”¨TIM1æŽ§åˆ¶å¦å¤–4è·¯ã€‚
 
-## ÎÄ¼þ
+## æ–‡ä»¶
 
 [servo.h](./servo.h)
 
 [servo.c](./servo.c)
 
-# ²½½øµç»ú-A4988
+# æ­¥è¿›ç”µæœº-A4988
 
-## ÃèÊö
+## æè¿°
 
-°åÔØA4988Á½ÏàËÄÏß²½½øµç»úÇý¶¯Æ÷¼°½Ó¿Ú¡£
+æ¿è½½A4988ä¸¤ç›¸å››çº¿æ­¥è¿›ç”µæœºé©±åŠ¨å™¨åŠæŽ¥å£ã€‚
 
-# ´®¿ÚÇý¶¯-uart
+# ä¸²å£é©±åŠ¨-uart
 
-## ÃèÊö
+## æè¿°
 
-USART2¡¢USAER3×÷Îª2Â·È«Ë«¹¤´®¿ÚÊ¹ÓÃ¡£
+USART2ã€USAER3ä½œä¸º2è·¯å…¨åŒå·¥ä¸²å£ä½¿ç”¨ã€‚
 
-## ÎÄ¼þ
+## æ–‡ä»¶
 
 [uart.h](./uart.h)
 
 [uart.c](./uart.c)
 
-# ADC½Ó¿Ú
+# ADCæŽ¥å£
 
-## ÃèÊö
+## æè¿°
 
-Ë«Â·µçÎ»Æ÷ADC½Ó¿ÚADC_IN8~9Î»ÓÚPB0~1£¬´ø3.3vµçÔ´¡£
+åŒè·¯ç”µä½å™¨ADCæŽ¥å£ADC_IN8~9ä½äºŽPB0~1ï¼Œå¸¦3.3vç”µæºã€‚
 
-# DAC½Ó¿Ú
+# DACæŽ¥å£
 
-## ÃèÊö
+## æè¿°
 
-Ô¤ÁôË«Â·DAC½Ó¿ÚDAC_OUT1~2Î»ÓÚPA4~5¡£
+é¢„ç•™åŒè·¯DACæŽ¥å£DAC_OUT1~2ä½äºŽPA4~5ã€‚
 
-# I2C½Ó¿Ú
+# I2CæŽ¥å£
 
-## ÃèÊö
+## æè¿°
 
-Ä¬ÈÏI2C½Ó¿ÚÎªI2C2£¬°åÔØ¶à´Ó»ú£ºMPU6050¼°OLED-0.96¡£
+é»˜è®¤I2CæŽ¥å£ä¸ºI2C2ï¼Œæ¿è½½å¤šä»Žæœºï¼šMPU6050åŠOLED-0.96ã€‚
 
-# SPI½Ó¿Ú
+# SPIæŽ¥å£
 
-## ÃèÊö
+## æè¿°
 
-Ä¬ÈÏSPI½Ó¿ÚÎªSPI2£¬°åÔØ2.4GÎÞÏßÄ£¿éNRF24L01£¬ÐèÒª×¢ÒâNRF24L01²¿·ÖÒý½ÅÓëUSART3¸´ÓÃ£¬Í¨¹ýÌøÏßÃ±P10ÇÐ»»¡£
+é»˜è®¤SPIæŽ¥å£ä¸ºSPI2ï¼Œæ¿è½½2.4Gæ— çº¿æ¨¡å—NRF24L01ï¼Œéœ€è¦æ³¨æ„NRF24L01éƒ¨åˆ†å¼•è„šä¸ŽUSART3å¤ç”¨ï¼Œé€šè¿‡è·³çº¿å¸½P10åˆ‡æ¢ã€‚
 
-# CAN×ÜÏß
+# CANæ€»çº¿
 
-## ÃèÊö
+## æè¿°
 
-°åÔØCANÊÕ·¢Æ÷£¬¿ÉÒÔÊ¹ÓÃCAN×ÜÏß¡£
+æ¿è½½CANæ”¶å‘å™¨ï¼Œå¯ä»¥ä½¿ç”¨CANæ€»çº¿ã€‚

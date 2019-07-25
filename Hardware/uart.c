@@ -23,6 +23,7 @@ GPIOA GPIOC
 uint16_t Uart_iHead = 0;
 uint16_t Uart_iTail = UART_BUFFER_SIZE - 1;
 uint8_t Uart_TxBufs[UART_BUFFER_SIZE];
+uint8_t Uart_RxBufs[UART_BUFFER_SIZE];
 uint8_t *Uart_pRx = Uart_RxBufs;
 
 //Fun
@@ -71,6 +72,7 @@ void Uart_Config(USART_TypeDef *usart, uint32_t baud)
 		GPIO_InitStructureRx.GPIO_Pin = GPIO_Pin_11;
 		GPIO_Init(GPIOC, &GPIO_InitStructureTx);
 		GPIO_Init(GPIOC, &GPIO_InitStructureRx);
+		GPIO_PinRemapConfig(GPIO_PartialRemap_USART3, ENABLE);
 		NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;
 	}
 	NVIC_Init(&NVIC_InitStructure);
@@ -116,7 +118,7 @@ void Uart_BufsHandler(void)
 {
 	if (UART_BUFFER->SR & USART_SR_TXE)
 	{
-		//≈–∂œª∫≥Â«¯ «∑Òªπ”– ˝æ›
+		//Âà§Êñ≠ÁºìÂÜ≤Âå∫ÊòØÂê¶ËøòÊúâÊï∞ÊçÆ
 		if (buffer_add(Uart_iTail) != Uart_iHead)
 		{
 			Uart_iTail = buffer_add(Uart_iTail);
@@ -129,7 +131,7 @@ void Uart_BufsHandler(void)
 	}
 	if (UART_BUFFER->SR & USART_SR_RXNE)
 	{
-		//Ω” ’
+		//Êé•Êî∂
 		if (Uart_pRx - Uart_RxBufs < UART_BUFFER_SIZE)
 		{
 			*Uart_pRx = UART_BUFFER->DR;

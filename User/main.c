@@ -4,6 +4,8 @@
 #include "uart.h"
 #include "motor.h"
 #include "Stemo.h"
+#include "adc.h"
+#include "Driver/JY61.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -11,6 +13,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 uint32_t Clock_LED = 0;
+uint32_t Clock_Mtr = 0;
 char str[20];
 
 /* Private function prototypes -----------------------------------------------*/
@@ -26,34 +29,61 @@ void GPIO_Config(void);
 int main(void)
 {
 	uint16_t n = 0;
+	uint16_t last_step = 0;
+	int16_t add_step = 0;
 	SysTick_Config(SystemCoreClock / 1000);
 
 	GPIO_Config();
 
 	//Hardware
-	Servo_Config();
-	Servo_Ch(TIM8, 1) = 1400;
+	//Uart
 	Uart_Config(USART2, 115200);
-
-	//Test
-	Motor_Config();
+	Uart_Config(USART3, 115200);
+	//ADC
+	ADC_Config();
+	//Stemo
+	Stemo_Config();
+	//Servo
+	Servo_ConfigT8();
+	//Motor
 	Motor_Encoder_Config();
-	Motor_Output(2, 0);
-	Motor_Stop(2);
-	//Clock_LED = 3000;
+	Motor_Config();
+	Motor_Stop(4);
 
 	/* Infinite loop */
 	while (1)
 	{
+		if (Clock_Mtr == 0)
+		{
+			Clock_Mtr = 20;
+			//Stemo_AddStep(15-(int16_t)((n > 30)?60-n:n));
+			Motor_Output(2, ((int16_t)2048 - ADC_Value1) * 10);
+			Servo_Ch(TIM8, 1) = 500 + ADC_Value1 / 4;
+			Servo_Ch(TIM8, 2) = 500 + ADC_Value2 / 4;
+			Servo_Ch(TIM8, 3) += (1500 - Servo_Ch(TIM8, 3)) * 2;
+			add_step = (int16_t)(Motor_GetStep(2) - last_step);
+			last_step = Motor_GetStep(2);
+			Stemo_SetStep(add_step);
+			/* sprintf(str, "%d\t%d\r\n", (int16_t)2048 - ADC_Value2, -add_step);
+			if (add_step > -140)
+				Uart_SendString(str); */
+			sprintf(str, "ADC1:%05d\r\n", ADC_Value1);
+			Uart_SendString(str);
+//			sprintf(str, "%05d\r\n", Motor_GetStep(4));
+//			Uart_SendString(str);
+		}
 		if (Clock_LED == 0)
 		{
-			Clock_LED = 20;
+			Clock_LED = 200;
 			GPIOC->ODR ^= GPIO_ODR_ODR13;
-			Servo_Ch(TIM8, 1) += (1500 - Servo_Ch(TIM8, 1)) * 2;
-			sprintf(str, "Motr:05%d\n",Motor_GetStep(2));
-			Uart_SendString(str);
-			sprintf(str, "BUG:%05d\r\n", n++);
-			Uart_SendString(str);
+			sprintf(str, "ADC1:%05d\r\n", ADC_Value1);
+			//Uart_SendString(str);
+			sprintf(str, "Step:%05d\r\n", Motor_GetStep(2));
+			//Uart_SendString(str);
+			sprintf(str, "BUG:%05d\r\n", (n > 30) ? 60 - n : n);
+			//Uart_SendString(str);
+			sprintf(str, "Ang:%.3f  %.3f  %.3f    \r\n", (float)JY61_stcAngle.Angle[0] / 32768 * 180, (float)JY61_stcAngle.Angle[1] / 32768 * 180, (float)JY61_stcAngle.Angle[2] / 32768 * 180);
+			//Uart_SendString(str);
 			n++;
 			if (n > 60)
 				n = 0;
@@ -102,9 +132,3 @@ void assert_failed(uint8_t *file, uint32_t line)
 	}
 }
 #endif
-
-/**
-  * @}
-  */
-
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

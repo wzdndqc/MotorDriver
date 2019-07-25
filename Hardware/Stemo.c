@@ -1,12 +1,9 @@
 #include "Stemo.h"
 
+int16_t Stemo_nowStep = 0;
+int16_t Stemo_setStep = 0;
 
-//当前位置
-int16_t Stemo_nowStep;
-//期望位置
-int16_t Stemo_setStep;
-
-void Stemo_DIR_int()
+void Stemo_Config()
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(Stemo_GPIO_CLK, ENABLE);  //使能GPIO外设时钟使能
@@ -27,15 +24,7 @@ void Stemo_DIR_int()
 	GPIO_Init(GPIOC, &GPIO_InitStructure);//初始化GPIO
 }
 
-void Stemo_StepPri(int16_t SP)
-{
-	//当前位置
-    Stemo_nowStep = 0;
-	//期望位置
-    Stemo_setStep = SP;
-}
-
-void STEMO_DRI() //步进电机循环服务函数，用户需要循环调用
+void Stemo_Loop() //步进电机循环服务函数，用户需要循环调用
 {
 	if (Stemo_nowStep<Stemo_setStep)
 	{
@@ -57,7 +46,6 @@ void STEMO_DRI() //步进电机循环服务函数，用户需要循环调用
 			Stemo_nowStep--;
 		}
 	}
-	
 }	
 
 
