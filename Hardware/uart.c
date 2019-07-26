@@ -20,13 +20,16 @@ GPIOA GPIOC
 #include "uart.h"
 
 //Var
-uint16_t Uart_iHead = 0;
-uint16_t Uart_iTail = UART_BUFFER_SIZE - 1;
-uint8_t Uart_TxBufs[UART_BUFFER_SIZE];
-uint8_t Uart_RxBufs[UART_BUFFER_SIZE];
-uint8_t *Uart_pRx = Uart_RxBufs;
 
 //Fun
+void Uart_InitBuffer(UART_Buffer *buffer, USART_TypeDef *USARTx, uint8_t *bufs, uint16_t size)
+{
+	buffer->USARTx = USARTx;
+	buffer->buffer = bufs;
+	buffer->size = size;
+	buffer->iHead = 0;
+	buffer->iTail = size - 1;
+}
 void Uart_Config(USART_TypeDef *usart, uint32_t baud)
 {
 	GPIO_InitTypeDef GPIO_InitStructureRx;
@@ -88,55 +91,48 @@ void Uart_Config(USART_TypeDef *usart, uint32_t baud)
 	USART_ITConfig(usart, USART_IT_RXNE, ENABLE);
 	USART_Cmd(usart, ENABLE);
 	usart->SR;
-
-	//Init
-	Uart_RxBufs[0] = 0;
 }
 
-#define buffer_add(val) ((val >= UART_BUFFER_SIZE - 1) ? 0 : val + 1)
-ErrorStatus Uart_SendString(char *str)
+#define buffer_add(buffer, val) ((val >= buffer->size - 1) ? 0 : val + 1)
+ErrorStatus Uart_SendString(UART_Buffer *buffer, char *str)
 {
-	uint16_t iHead = Uart_iHead;
+	uint16_t iHead = buffer->iHead;
 	while (*str)
 	{
-		if (iHead != Uart_iTail)
+		if (iHead != buffer->iTail)
 		{
-			Uart_TxBufs[iHead] = *(str++);
-			iHead = buffer_add(iHead);
+			buffer->buffer[iHead] = *(str++);
+			iHead = buffer_add(buffer, iHead);
 		}
 		else
 		{
 			return ERROR;
 		}
 	}
-	Uart_iHead = iHead;
-	USART_ITConfig(UART_BUFFER, USART_IT_TXE, ENABLE);
+	buffer->iHead = iHead;
+	USART_ITConfig(buffer->USARTx, USART_IT_TXE, ENABLE);
 	return SUCCESS;
 }
 
-void Uart_BufsHandler(void)
+void Uart_BufsHandler(UART_Buffer *buffer)
 {
-	if (UART_BUFFER->SR & USART_SR_TXE)
+	if (buffer->USARTx->SR & USART_SR_TXE)
 	{
 		//判断缓冲区是否还有数据
-		if (buffer_add(Uart_iTail) != Uart_iHead)
+		if (buffer_add(buffer, buffer->iTail) != buffer->iHead)
 		{
-			Uart_iTail = buffer_add(Uart_iTail);
-			UART_BUFFER->DR = Uart_TxBufs[Uart_iTail];
+			buffer->iTail = buffer_add(buffer, buffer->iTail);
+			buffer->USARTx->DR = buffer->buffer[buffer->iTail];
 		}
 		else
 		{
-			USART_ITConfig(UART_BUFFER, USART_IT_TXE, DISABLE);
+			USART_ITConfig(buffer->USARTx, USART_IT_TXE, DISABLE);
 		}
 	}
-	if (UART_BUFFER->SR & USART_SR_RXNE)
+	if (buffer->USARTx->SR & USART_SR_RXNE)
 	{
-		//接收
-		if (Uart_pRx - Uart_RxBufs < UART_BUFFER_SIZE)
-		{
-			*Uart_pRx = UART_BUFFER->DR;
-			*(Uart_pRx++) = 0;
-		}
+		//接收中断保护
+		buffer->USARTx->DR;
 	}
 }
 
