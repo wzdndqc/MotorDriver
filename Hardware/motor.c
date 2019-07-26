@@ -179,12 +179,14 @@ void Motor_Encoder_Config(void)
 	TIM_ICInitTypeDef TIM_ICInitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM4 | RCC_APB1Periph_TIM5, ENABLE); //使能定时器4的时钟
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB, ENABLE);										   //使能端口时钟
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);					   //使能端口时钟
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1; //端口配置
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;  //浮空输入
 
 	//M1
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
+	GPIO_PinRemapConfig(GPIO_PartialRemap1_TIM2, ENABLE);
 	GPIO_InitStructure.GPIO_Pin = PIN_M1_EA;
 	GPIO_Init(GPIO_M1_EA, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = PIN_M1_EB;
