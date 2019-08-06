@@ -97,16 +97,13 @@
 #define  TIM_M4_ENCODE TIM5
 
 //Var
-/* 
- * @brief	Period(ms) of pwm output to motor
- */
-#define MOTOR_PERIOD 20000
 
 //Fun
 /* 
  * @brief	Init TIM1~5 and GPIO for TB6612FNG driver
+ * @para	period	Period(ms) of pwm output to motor
  */
-void Motor_Config(void);
+void Motor_Config(uint16_t period);
 /* 
  * @brief	Init TIM2~5 and GPIO for Encode of motor.
  */

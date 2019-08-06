@@ -13,7 +13,7 @@
 //Var
 
 //Fun
-void Motor_Config(void)
+void Motor_Config(uint16_t period)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -57,7 +57,7 @@ void Motor_Config(void)
 
 	//TIM Base : 1us Psc 20ms Per
 	TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
-	TIM_TimeBaseStructure.TIM_Period = MOTOR_PERIOD - 1;
+	TIM_TimeBaseStructure.TIM_Period = period - 1;
 	TIM_TimeBaseStructure.TIM_Prescaler = (SystemCoreClock / 1000000) - 1;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;

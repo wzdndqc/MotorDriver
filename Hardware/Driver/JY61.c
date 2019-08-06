@@ -11,6 +11,8 @@ struct JY61_SPress JY61_stcPress;
 struct JY61_SLonLat JY61_stcLonLat;
 struct JY61_SGPSV JY61_stcGPSV;
 
+unsigned char JY61_FlagRx = 0;
+
 //CopeSerialData为串口中断调用函数，串口每收到一个数据，调用一次这个函数。
 void JY61_RxData(unsigned char ucData)
 {
@@ -60,5 +62,6 @@ void JY61_RxData(unsigned char ucData)
 			break;
 		}
 		ucRxCnt = 0;
+		JY61_FlagRx = 1;
 	}
 }

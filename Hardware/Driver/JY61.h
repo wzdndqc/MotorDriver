@@ -137,6 +137,9 @@ extern struct JY61_SPress JY61_stcPress;
 extern struct JY61_SLonLat JY61_stcLonLat;
 extern struct JY61_SGPSV JY61_stcGPSV;
 
+//接收完成Flag
+extern unsigned char JY61_FlagRx;
+
 //CopeSerialData为串口中断调用函数，串口每收到一个数据，调用一次这个函数。
 void JY61_RxData(unsigned char ucData);
 

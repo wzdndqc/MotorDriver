@@ -37,6 +37,7 @@
 /* Private variables ---------------------------------------------------------*/
 extern uint32_t Clock_LED;
 extern uint32_t Clock_Mtr;
+extern UART_Buffer buffer2;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -160,7 +161,7 @@ void SysTick_Handler(void)
   */
 void USART2_IRQHandler(void)
 {
-  Uart_BufsHandler();
+  Uart_BufsHandler(&buffer2);
 }
 
 /**

@@ -26,6 +26,7 @@
 #include "stm32f10x.h"
 
 //Var
+#define Servo_Period 20000 //20ms
 
 //Fun
 /*
@@ -35,11 +36,11 @@
 /*
  * @brief Init the Servo interface at PC6~PC9 with TIM8.
  */
-void Servo_ConfigT8(void);
+void Servo_ConfigT8(uint16_t period);
 /*
  * @brief Init the Servo interface at PA8~PA11 with TIM1.
  */
-void Servo_ConfigT1(void);
+void Servo_ConfigT1(uint16_t period);
 
 /*
  * @brief Get/Set output of servo channel
@@ -55,6 +56,6 @@ void Servo_ConfigT1(void);
  * 	Servo_Ch(TIM8,1) = 1500; // 1.5ms
  * @endcode
  */
-#define Servo_Ch(tim,ch) (tim->CCR##ch)
+#define Servo_Ch(tim, ch) (tim->CCR##ch)
 
 #endif
