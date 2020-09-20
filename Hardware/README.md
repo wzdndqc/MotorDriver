@@ -147,13 +147,13 @@ USART2、USAER3作为2路全双工串口使用。
 
 ## 描述
 
-双路电位器ADC接口ADC_IN8~9位于PB0~1，带3.3v电源。
+双路电位器ADC接口ADC_IN8-9位于PB0-1，带3.3v电源。
 
 # DAC接口
 
 ## 描述
 
-预留双路DAC接口DAC_OUT1~2位于PA4~5。
+预留双路DAC接口DAC_OUT1-2位于PA4-5。
 
 # I2C接口
 
