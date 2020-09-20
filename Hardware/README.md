@@ -125,11 +125,29 @@ void main(void)
 
 [servo.c](./servo.c)
 
+## 例程
+
+```
+//Servo
+Servo_ConfigT8(20000);
+//Servo output
+Servo_Ch(TIM8, 1) = 500;
+Servo_Ch(TIM8, 2) = 1000;
+Servo_Ch(TIM8, 3) += (1500 - Servo_Ch(TIM8, 3)) * 2;
+Servo_Ch(TIM8, 4) = 1500;
+```
+
 # 步进电机-A4988
 
 ## 描述
 
 板载A4988两相四线步进电机驱动器及接口。
+
+## 文件
+
+[Stemo.h](./Stemo.h)
+
+[Stemo.c](./Stemo.c)
 
 # 串口驱动-uart
 
@@ -143,11 +161,42 @@ USART2、USAER3作为2路全双工串口使用。
 
 [uart.c](./uart.c)
 
+## 例程
+
+main.c :
+```
+//Def
+UART_Buffer buffer;
+uint8_t bufStr[256];
+char str[48];
+
+//Config IN function main
+Uart_Config(USART2, 115200);
+Uart_InitBuffer(&buffer, USART2, bufStr, sizeof(bufStr));
+
+//Uart print to USART2 IN while loop
+sprintf(str, "ADC1:%05d\r\n", ADC_Value1);
+Uart_SendString(&buffer, str);
+```
+stm32f10x_it.c :
+```
+void USART2_IRQHandler(void)
+{
+  Uart_BufsHandler(&buffer);
+}
+```
+
 # ADC接口
 
 ## 描述
 
 双路电位器ADC接口ADC_IN8-9位于PB0-1，带3.3v电源。
+
+## 文件
+
+[adc.h](./adc.h)
+
+[adc.c](./adc.c)
 
 # DAC接口
 
