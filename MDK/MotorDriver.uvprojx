@@ -545,6 +545,11 @@
               <FileType>1</FileType>
               <FilePath>..\Hardware\Driver\JY61.c</FilePath>
             </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\i2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

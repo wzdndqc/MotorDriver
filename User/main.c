@@ -6,6 +6,7 @@
 #include "Stemo.h"
 #include "adc.h"
 #include "Driver/JY61.h"
+#include "i2c.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -53,6 +54,11 @@ int main(void)
 	Motor_Encoder_Config();
 	Motor_Config(2000);
 	Motor_Stop(4);
+	//I2C
+	I2C_Config();
+	str[0] = I2C_Test();
+	str[1] = 0;
+	Uart_SendString(&buffer2, str);
 
 	/* Infinite loop */
 	while (1)
