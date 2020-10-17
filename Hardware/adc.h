@@ -32,9 +32,9 @@
 #define ADC_IRQ ADC1_2_IRQn
 #define ADC_IRQHandler ADC1_2_IRQHandler
 
-/* 
- * @brief	ADC Init with DMA
- */
+/** 
+  * @brief	ADC Init with DMA
+  */
 void ADC_Config(void);
 extern __IO uint16_t ADC_ConvertedValue[2];
 //直接读取adc1或adc2的值

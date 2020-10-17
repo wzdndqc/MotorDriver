@@ -1,8 +1,8 @@
-/*
+/**
  * @file	servo.h
- * @auther	Tamap
- * @brief	Servo Driver
+ * @author	Tamap
  * @date	2019-7-14
+ * @brief	Servo Driver
  * 
  * IO res:
  * T1_1 : PA8
@@ -29,33 +29,32 @@
 #define Servo_Period 20000 //20ms
 
 //Fun
-/*
- * @brief Init the defaults Servo interface.
- */
+/**
+  * @brief Init the defaults Servo interface.
+  */
 #define Servo_Config Servo_ConfigT8
-/*
- * @brief Init the Servo interface at PC6~PC9 with TIM8.
- */
+/**
+  * @brief Init the Servo interface at PC6~PC9 with TIM8.
+  */
 void Servo_ConfigT8(uint16_t period);
-/*
- * @brief Init the Servo interface at PA8~PA11 with TIM1.
- */
+/**
+  * @brief Init the Servo interface at PA8~PA11 with TIM1.
+  */
 void Servo_ConfigT1(uint16_t period);
 
-/*
- * @brief Get/Set output of servo channel
- * 
- * @param [in] tim	*TIM_Typedef:
- * 	-TIM8
- * 	-TIM1
- * @param [in] ch	Channel of pwm output:
- * 	-1~4
- * @return The channel
- * @par	Example:
- * @code
- * 	Servo_Ch(TIM8,1) = 1500; // 1.5ms
- * @endcode
- */
+/**
+  * @brief Get/Set output of servo channel
+  * @param tim	*TIM_Typedef:
+  * 	@arg TIM8
+  * 	@arg TIM1
+  * @param ch	Channel of pwm output:
+  * 	@arg 1~4
+  * @return	The channel
+  * @par	Example:
+  * @code
+  * 	Servo_Ch(TIM8,1) = 1500; // 1.5ms
+  * @endcode
+  */
 #define Servo_Ch(tim, ch) (tim->CCR##ch)
 
 #endif

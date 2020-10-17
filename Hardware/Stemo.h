@@ -16,18 +16,18 @@ extern int16_t Stemo_nowStep;
 //期望位置
 extern int16_t Stemo_setStep;
 
-/* 
- * @brief	设置步进
- */
+/** 
+  * @brief	设置步进
+  */
 #define Stemo_AddStep(sp) Stemo_setStep += (int16_t)(sp)
 #define Stemo_SetStep(sp) Stemo_setStep = (sp)
 #define Stemo_SetPos(p) Stemo_nowStep = (p)
-/* 
- * @brief	步进电机初始化函数
- */
+/** 
+  * @brief	步进电机初始化函数
+  */
 void Stemo_Config(void);
-/* 
- * @brief	步进电机循环服务函数，用户需要定时调用
- */
+/** 
+  * @brief	步进电机循环服务函数，用户需要定时调用
+  */
 void Stemo_Loop(void);
 #endif

@@ -99,41 +99,39 @@
 //Var
 
 //Fun
-/* 
- * @brief	Init TIM1~5 and GPIO for TB6612FNG driver
- * @para	period	Period(ms) of pwm output to motor
- */
+/** 
+  * @brief	Init TIM1~5 and GPIO for TB6612FNG driver
+  * @param	period	Period(ms) of pwm output to motor
+  */
 void Motor_Config(uint16_t period);
-/* 
- * @brief	Init TIM2~5 and GPIO for Encode of motor.
- */
+/** 
+  * @brief	Init TIM2~5 and GPIO for Encode of motor.
+  */
 void Motor_Encoder_Config(void);
-/*
- * @brief	Set motor state to Stop:OFF(High impedance)
- * 
- * @param[in] index	Index of motor:
- * 	- 1~4
- */
+/**
+  * @brief	Set motor state to Stop:OFF(High impedance)
+  * @param	index	Index of motor:
+  * 	@arg 1~4
+  */
 void Motor_Stop(uint8_t index);
-/*
- * @brief	Set duty cycle of pwm output
- * 
- * @param[in] index	Index of motor:
- * 	- 1~4
- * @param[in] pwm	Duty cycle of pwm output, negative means reverse.
- */
+/**
+  * @brief	Set duty cycle of pwm output
+  * @param	index: Index of motor:
+  * 	@arg 1~4
+  * @param	pwm: Duty cycle of pwm output, negative means reverse.
+  * @retval	None
+  */
 void Motor_Output(uint8_t index,int16_t pwm);
-/*
- * @brief Get step number of encoder form TIM2/3/4/5
- * 
- * @param[in] index	Index of motor:
- * 	- 1~4
- * @retval step number of encoder
- * @par	Example:
- * @code
- * 	step = Motor_GetStep(1);
- * @endcode
- */
+/**
+  * @brief Get step number of encoder form TIM2/3/4/5
+  * @param	index	Index of motor:
+  * 	@arg 1~4
+  * @retval	step number of encoder
+  * @par	Example:
+  * @code
+  * 	step = Motor_GetStep(1);
+  * @endcode
+  */
 uint16_t Motor_GetStep(uint8_t index);
 
 #endif
