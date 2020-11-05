@@ -30,6 +30,7 @@
 
 //Fun
 void I2C_Config(void);
-uint8_t I2C_Test(void);
+uint8_t I2C_TestWhileSTD(void);
+uint8_t I2C_TestWhileREG(void);
 
 #endif

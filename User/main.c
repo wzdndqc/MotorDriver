@@ -56,7 +56,7 @@ int main(void)
 	Motor_Stop(4);
 	//I2C
 	I2C_Config();
-	str[0] = I2C_Test();
+	str[0] = I2C_TestWhileSTD();
 	str[1] = 0;
 	Uart_SendString(&buffer2, str);
 

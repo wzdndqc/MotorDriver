@@ -54,12 +54,12 @@ void I2C_Config(void)
 	I2C_Cmd(I2C2, ENABLE);
 }
 
-uint8_t I2C_Test(void)
+uint8_t I2C_TestWhileSTD(void)
 {
 	uint32_t timeout;
 	uint8_t buf;
 
-	timeout = 4096;
+	timeout = 40960;
 	while (I2C_GetFlagStatus(I2C2, I2C_FLAG_BUSY))
 	{
 		if ((timeout--) == 0)
@@ -68,7 +68,7 @@ uint8_t I2C_Test(void)
 
 	I2C_GenerateSTART(I2C2, ENABLE);
 
-	timeout = 4096;
+	timeout = 0x1000;
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_MODE_SELECT))
 	{
 		if ((timeout--) == 0)
@@ -76,6 +76,87 @@ uint8_t I2C_Test(void)
 	}
 
 	I2C_Send7bitAddress(I2C2, 0xD0, I2C_Direction_Transmitter);
+
+	timeout = 0x1000;
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+	{
+		if ((timeout--) == 0)
+			return 0;
+	}
+
+	I2C_SendData(I2C2, 0x75);
+
+	timeout = 0x1000;
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
+	{
+		if ((timeout--) == 0)
+			return 0;
+	}
+
+	I2C_GenerateSTART(I2C2, ENABLE);
+
+	timeout = 0x1000;
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_MODE_SELECT))
+	{
+		if ((timeout--) == 0)
+			return 0;
+	}
+
+	I2C_Send7bitAddress(I2C2, 0xD0, I2C_Direction_Receiver);
+
+	timeout = 0x1000;
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
+	{
+		if ((timeout--) == 0)
+			return 0;
+	}
+
+	I2C_AcknowledgeConfig(I2C2, DISABLE);
+	I2C_GenerateSTOP(I2C2, ENABLE);
+
+	timeout = 0x1000;
+	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_RECEIVED))
+	{
+		if ((timeout--) == 0)
+			return 0;
+	}
+
+	buf = I2C_ReceiveData(I2C2);
+
+	I2C_AcknowledgeConfig(I2C2, ENABLE);
+
+	timeout = 0x1000;
+	while (I2C_GetFlagStatus(I2C2, I2C_FLAG_BUSY))
+	{
+		if ((timeout--) == 0)
+			return 0;
+	}
+
+	return buf;
+}
+
+uint8_t I2C_TestWhileREG(void)
+{
+	uint32_t timeout;
+	uint8_t buf;
+
+	timeout = 4096;
+	while (I2C2->SR2 & I2C_SR2_BUSY)
+	{
+		if ((timeout--) == 0)
+			return 0;
+	}
+
+	I2C2->CR1 |= I2C_CR1_START;
+
+	timeout = 4096;
+	while (!(I2C2->SR1 & I2C_SR1_SB))
+	{
+		if ((timeout--) == 0)
+			return 0;
+	}
+
+	I2C2->DR = 0xD0 | 0x00;
 
 	timeout = 4096;
 	while (!I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
