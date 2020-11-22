@@ -1,16 +1,16 @@
 # MotorDriver
 
-## ³õ´ÎClone
+## åˆæ¬¡Clone
 
-### 1¡¢Ìí¼ÓSTM32F10X±ê×¼ÍâÉè¿â
+### 1ã€æ·»åŠ STM32F10Xæ ‡å‡†å¤–è®¾åº“
 
-±¾ÏîÄ¿Ê¹ÓÃSTM32±ê×¼ÍâÉè¿âSTM32F10x_StdPeriph_Lib_V3.5.0¡£
+æœ¬é¡¹ç›®ä½¿ç”¨STM32æ ‡å‡†å¤–è®¾åº“STM32F10x_StdPeriph_Lib_V3.5.0ã€‚
 
-NTFS·ÖÇøÏÂ£¬¿ÉÒÔÊ¹ÓÃ·ûºÅÁ´½ÓÀ´Íê³É¡£¸´ÖÆÕ³Ìùlink copy.bat²¢ÖØÃüÃûÎªlink.bat¡£ÓÒ¼ü±à¼­Link.bat£¬½«X:\xxx\LibrariesÐÞ¸ÄÎª±¾µØÍâÉè¿âÖÐLibrariesÎÄ¼þ¼ÐµÄÄ¿Â¼¡£
+NTFSåˆ†åŒºä¸‹ï¼Œå¯ä»¥ä½¿ç”¨ç¬¦å·é“¾æŽ¥æ¥å®Œæˆã€‚å¤åˆ¶ç²˜è´´link copy.batå¹¶é‡å‘½åä¸ºlink.batã€‚å³é”®ç¼–è¾‘Link.batï¼Œå°†X:\xxx\Librariesä¿®æ”¹ä¸ºæœ¬åœ°å¤–è®¾åº“ä¸­Librariesæ–‡ä»¶å¤¹çš„ç›®å½•ã€‚
 
-FAT32»òÆäËû·ÖÇø²»Ö§³Ö·ûºÅÁ´½Ó£¬Ö±½Ó¸´ÖÆÍâÉè¿âÖÐµÄLibrariesÎÄ¼þ¼Ðµ½ÏîÄ¿ÖÐ¼´¿É¡£
+FAT32æˆ–å…¶ä»–åˆ†åŒºä¸æ”¯æŒç¬¦å·é“¾æŽ¥ï¼Œç›´æŽ¥å¤åˆ¶å¤–è®¾åº“ä¸­çš„Librariesæ–‡ä»¶å¤¹åˆ°é¡¹ç›®ä¸­å³å¯ã€‚
 
-ËùÐèÍâÉè¿â´óÖÂÄ¿Â¼½á¹¹ÈçÏÂ£º
+æ‰€éœ€å¤–è®¾åº“å¤§è‡´ç›®å½•ç»“æž„å¦‚ä¸‹ï¼š
 
 Libraries
 - CMSIS
@@ -21,14 +21,14 @@ Libraries
 	- inc
 	- src
 
-Íê³ÉÐÞ¸ÄºóÔËÐÐlink.bat¼´¿ÉÍê³ÉÍâÉè¿âµÄÁ´½Ó¡£
+å®Œæˆä¿®æ”¹åŽè¿è¡Œlink.batå³å¯å®Œæˆå¤–è®¾åº“çš„é“¾æŽ¥ã€‚
 
-### 2¡¢Ê¹ÓÃvscodeµÄÉèÖÃ
+### 2ã€ä½¿ç”¨vscodeçš„è®¾ç½®
 
-ÔÚ.vscodeÎÄ¼þ¼ÐÏÂ¸´ÖÆÕ³Ìùc_cpp_properties copy.json²¢ÖØÃüÃûÎªc_cpp_properties.json£¬ÐÞ¸Ä"compilerPath"²ÎÊýÎª±¾µØgcc±àÒëÆ÷¡£
+åœ¨.vscodeæ–‡ä»¶å¤¹ä¸‹å¤åˆ¶ç²˜è´´c_cpp_properties copy.jsonå¹¶é‡å‘½åä¸ºc_cpp_properties.jsonï¼Œä¿®æ”¹"compilerPath"å‚æ•°ä¸ºæœ¬åœ°gccç¼–è¯‘å™¨ã€‚
 
-## Ê¹ÓÃ¹¤³Ì
+## ä½¿ç”¨å·¥ç¨‹
 
-ÏêÏ¸µÄ°åÉÏIO·ÖÅä¼°Ó²¼þÇý¶¯ÃèÊö²Î¿¼[Hardware](Hardware/README.md)¡£
+è¯¦ç»†çš„æ¿ä¸ŠIOåˆ†é…åŠç¡¬ä»¶é©±åŠ¨æè¿°å‚è€ƒ[Hardware](Hardware/README.md)ã€‚
 
 Create by ChnTamap 2019.7.5

@@ -33,9 +33,9 @@
 //缓冲区结构体
 typedef struct
 {
-	//缓冲区大小
-	USART_TypeDef *USARTx;
 	//缓冲区发送所用的USART
+	USART_TypeDef *USARTx;
+	//缓冲区大小
 	uint16_t size;
 	//缓冲区
 	uint8_t *buffer;

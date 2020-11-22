@@ -19,6 +19,12 @@ uint32_t Clock_Mtr = 0;
 UART_Buffer buffer2;
 uint8_t bufStr2[256];
 char str[48];
+//I2C
+I2C_BufferTypeDef I2C_buffer2;
+I2C_IdxBuffer I2C_idxs2[4];
+uint8_t I2C_data2[8];
+ErrorStatus staTest;
+uint8_t dataTest;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -36,6 +42,9 @@ int main(void)
 	uint16_t last_step = 0;
 	int16_t add_step = 0;
 	SysTick_Config(SystemCoreClock / 1000);
+
+	// Clock_LED = 200;
+	// while(Clock_LED);
 
 	GPIO_Config();
 
@@ -56,9 +65,18 @@ int main(void)
 	Motor_Stop(4);
 	//I2C
 	I2C_Config();
-	str[0] = I2C_TestWhileSTD();
-	str[1] = 0;
-	Uart_SendString(&buffer2, str);
+
+	//TestBuffer
+	I2C_InitBuffer(&I2C_buffer2, I2C2, I2C_idxs2, sizeof(I2C_idxs2), I2C_data2, sizeof(I2C_data2));
+	staTest = I2C_ReadMem(&I2C_buffer2, 0xD1, 0x75, &dataTest, 1 - 1);
+	staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, 0x74, (uint8_t[]){0,1,4}, 3 - 1);
+	staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, 0x74, (uint8_t *)"Fuck", 4 - 1);
+	//staTest = I2C_ReadMem(&I2C_buffer2, 0xD1, 0x75, &dataTest, 1 - 1);
+	//I2C_TestWhileREG();
+
+	//Start I2C
+	//I2C2->CR2 |= (I2C_CR2_ITBUFEN | I2C_CR2_ITEVTEN | I2C_CR2_ITERREN);
+	//I2C2->CR1 |= I2C_CR1_START;
 
 	/* Infinite loop */
 	while (1)
@@ -110,6 +128,14 @@ void GPIO_Config(void)
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_13;
 	GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+	//DBG
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_9;
+	GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	//Key
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);

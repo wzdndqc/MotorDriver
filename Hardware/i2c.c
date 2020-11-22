@@ -19,6 +19,25 @@
 
 #include "i2c.h"
 
+void I2C_InitBuffer(I2C_BufferTypeDef *buffer, I2C_TypeDef *I2Cx, I2C_IdxBuffer *idxBufs, uint16_t idxSize, uint8_t *dataBufs, uint16_t dataSize)
+{
+	buffer->I2Cx = I2Cx;
+
+	buffer->IdxBuffer = idxBufs;
+	buffer->IdxSize = idxSize;
+	buffer->IdxEmpty = 1;
+	buffer->pIHead = idxBufs;
+	buffer->pITail = idxBufs;
+
+	buffer->DataBuffer = dataBufs;
+	buffer->DataSize = dataSize;
+	buffer->DataEmpty = 1;
+	buffer->pDHead = dataBufs;
+	buffer->pDTail = dataBufs;
+
+	buffer->ReTimes = 0;
+}
+
 void I2C_Config(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -52,6 +71,308 @@ void I2C_Config(void)
 	//Init
 	I2C_Init(I2C2, &I2C_InitStructure);
 	I2C_Cmd(I2C2, ENABLE);
+}
+
+//Write
+ErrorStatus I2C_WriteBuffer(I2C_BufferTypeDef *buffer, uint8_t addr, uint8_t reg, uint8_t *datas, uint8_t len_1)
+{
+	uint8_t *pDHeadTmp;
+	uint8_t *pDataEnd;
+	I2C_IdxBuffer *pIHeadTmp;
+	I2C_IdxBuffer *pIdxEnd;
+	//IdxFull
+	if (buffer->pIHead == buffer->pITail)
+		if (!buffer->IdxEmpty)
+			return ERROR;
+	//DatFull
+	if (buffer->pDHead == buffer->pDTail)
+		if (!buffer->DataEmpty)
+			return ERROR;
+	//Empty Len(Size)	Len 1 ~ 256 Len_1 0 ~ 255
+	if (buffer->pDHead < buffer->pDTail)
+	{
+		if (len_1 > buffer->pDTail - buffer->pDHead - 1)
+			return ERROR;
+	}
+	else
+	{
+		if (len_1 > buffer->pDTail + buffer->DataSize - buffer->pDHead - 1)
+			return ERROR;
+	}
+
+	//Save Head
+	pDHeadTmp = buffer->pDHead;
+	pIHeadTmp = buffer->pIHead;
+	//Count End
+	pDataEnd = buffer->DataBuffer + buffer->DataSize - 1;
+	pIdxEnd = buffer->IdxBuffer + buffer->IdxSize - 1;
+
+	//Set Datas head
+	pIHeadTmp->Data = buffer->pDHead;
+	pIHeadTmp->Len = len_1;
+	//Write datas
+	do
+	{
+		*(pDHeadTmp++) = *(datas++);
+		if (pDHeadTmp > pDataEnd)
+			pDHeadTmp = buffer->DataBuffer;
+	} while (len_1--);
+	//Warrning!len_1 has been change
+
+	//Set idxSct
+	pIHeadTmp->Addr = addr;
+	pIHeadTmp->Reg = reg;
+
+	//DISABLE IT
+	buffer->I2Cx->CR2 &= ~(I2C_CR2_ITERREN | I2C_CR2_ITEVTEN);
+
+	//Set Head
+	buffer->pDHead = pDHeadTmp;
+	if (buffer->pDHead == buffer->pDTail)
+		buffer->DataEmpty = 0;
+	if (pIHeadTmp < pIdxEnd)
+		buffer->pIHead = pIHeadTmp + 1;
+	else
+		buffer->pIHead = buffer->IdxBuffer;
+	if (buffer->pIHead == buffer->pITail)
+		buffer->IdxEmpty = 0;
+
+	//Enable EV ER IT
+	I2C_AutoStartHandle(buffer);
+
+	//ENABLE IT
+	buffer->I2Cx->CR2 |= (I2C_CR2_ITERREN | I2C_CR2_ITEVTEN);
+
+	return SUCCESS;
+}
+//Read
+ErrorStatus I2C_ReadMem(I2C_BufferTypeDef *buffer, uint8_t addr, uint8_t reg, uint8_t *datas, uint8_t len_1)
+{
+	I2C_IdxBuffer *pIHeadTmp;
+	I2C_IdxBuffer *pIdxEnd;
+	//IdxFull
+	if (buffer->pIHead == buffer->pITail)
+		if (!buffer->IdxEmpty)
+			return ERROR;
+	//Save Head
+	pIHeadTmp = buffer->pIHead;
+	//Count End
+	pIdxEnd = buffer->IdxBuffer + buffer->IdxSize - 1;
+	//Set idxSct
+	pIHeadTmp->Data = datas;
+	pIHeadTmp->Len = len_1;
+	pIHeadTmp->Addr = addr | 0x01;
+	pIHeadTmp->Reg = reg;
+
+	//DISABLE IT
+	buffer->I2Cx->CR2 &= ~(I2C_CR2_ITERREN | I2C_CR2_ITEVTEN);
+
+	//Set Head
+	if (pIHeadTmp < pIdxEnd)
+		buffer->pIHead = pIHeadTmp + 1;
+	else
+		buffer->pIHead = buffer->IdxBuffer;
+	if (buffer->pIHead == buffer->pITail)
+		buffer->IdxEmpty = 0;
+
+	//Enable EV ER IT
+	I2C_AutoStartHandle(buffer);
+
+	//ENABLE IT
+	buffer->I2Cx->CR2 |= (I2C_CR2_ITERREN | I2C_CR2_ITEVTEN);
+
+	return SUCCESS;
+}
+
+#define IS_EVENT(sr, evt) ((sr & evt) == evt)
+//Buffer handler
+void I2C_BufsHandler(I2C_BufferTypeDef *buffer)
+{
+	I2C_IdxBuffer *idxNow = buffer->pITail;
+	I2C_TypeDef *I2Cx = buffer->I2Cx;
+	uint8_t *pData;
+	uint32_t SR, SR2;
+
+	//Get flags
+	SR = I2Cx->SR1;
+	SR2 = I2Cx->SR2;
+	SR2 = SR2 << 16;
+	SR = (SR | SR2);
+
+	//SB, Send Addr.
+	if (IS_EVENT(SR, I2C_EVENT_MASTER_MODE_SELECT))
+	{
+		//Write:0xFE 0xFE;Read:0xFE 0xFF
+		I2Cx->DR = idxNow->Addr & ((I2Cx->CR2 & I2C_CR2_ITBUFEN) ? 0xFE : 0xFF);
+		I2Cx->CR2 |= I2C_CR2_ITBUFEN;
+		//Reset pData
+		buffer->pData = idxNow->Data;
+	}
+	//ADDR, Send Reg.
+	else if (IS_EVENT(SR, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+	{
+		I2Cx->DR = idxNow->Reg;
+		//Close ITBUFEN if is ReadIdx
+		if (idxNow->Addr & 0x01)
+			I2Cx->CR2 &= ~I2C_CR2_ITBUFEN;
+	}
+	//BTF, Restart
+	else if (IS_EVENT(SR, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
+	{
+		if (idxNow->Addr & 0x01)
+			//Read Mode
+			I2Cx->CR1 |= I2C_CR1_START; //Restart
+		else
+		//Write Mode
+		{
+			//pData add
+			buffer->pData++;
+			if (buffer->pData >= buffer->DataBuffer + buffer->DataSize)
+				buffer->pData = buffer->DataBuffer;
+			//Set pDTail
+			buffer->pDTail = pData;
+			if (buffer->pDTail == buffer->pDHead)
+				buffer->DataEmpty = 1;
+			//Next idxSct
+			buffer->pITail++;
+			if (buffer->pITail >= buffer->IdxBuffer + buffer->IdxSize)
+				buffer->pITail = buffer->IdxBuffer;
+			//Is Empty?
+			if (buffer->pITail == buffer->pIHead)
+			{
+				buffer->IdxEmpty = 1;
+				I2Cx->CR1 |= I2C_CR1_STOP; //Stop
+			}
+			else
+			{
+				I2Cx->CR1 |= I2C_CR1_START; //Restart
+			}
+		}
+		I2Cx->DR = 0x00;
+	}
+	//TXE, Write next data
+	else if (IS_EVENT(SR, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
+	{
+		pData = buffer->pData;
+		//Write data
+		I2Cx->DR = *pData;
+		//Last one?
+		if ((pData < idxNow->Data) ? (pData + buffer->DataSize - idxNow->Data) : (pData - idxNow->Data) >= idxNow->Len)
+		{
+			//Close ITBUFEN
+			I2Cx->CR2 &= ~I2C_CR2_ITBUFEN;
+		}
+		else
+		{
+			//pData add
+			pData++;
+			if (pData >= buffer->DataBuffer + buffer->DataSize)
+				pData = buffer->DataBuffer;
+			buffer->pData = pData;
+		}
+	}
+	//ADDR, Receive datas
+	else if (IS_EVENT(SR, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
+	{
+		//I2Cx->CR2 |= I2C_CR2_ITBUFEN;
+		//If only one to receive
+		if (idxNow->Len == 0)
+		{
+			I2Cx->CR1 &= ~I2C_CR1_ACK;
+			//Count next idxSct
+			idxNow++;
+			if (idxNow >= buffer->IdxBuffer + buffer->IdxSize)
+				idxNow = buffer->IdxBuffer;
+			//Is Last one?
+			if (idxNow == buffer->pIHead)
+			{
+				I2Cx->CR1 |= I2C_CR1_STOP; //Stop
+			}
+			else
+			{
+				I2Cx->CR1 |= I2C_CR1_START; //Restart
+			}
+			/* * * * * * * * * * * * * * * * * *
+			 * WARNING:idxNow has been change  *
+			 * * * * * * * * * * * * * * * * * */
+		}
+		else
+		{
+			I2Cx->CR1 |= I2C_CR1_ACK;
+		}
+
+		//I2Cx->CR1 |= I2C_CR1_STOP;
+	}
+	//RXNE, Receiving,LastData,OverReceive
+	else if (IS_EVENT(SR, I2C_EVENT_MASTER_BYTE_RECEIVED))
+	{
+		pData = buffer->pData;
+		//Save data
+		*pData = I2Cx->DR;
+
+		if (pData == idxNow->Data + idxNow->Len - 1) //This is receive so its OK
+		{
+			//Last one
+			I2Cx->CR1 &= ~I2C_CR1_ACK;
+			//Count next idxSct
+			idxNow++;
+			if (idxNow >= buffer->IdxBuffer + buffer->IdxSize)
+				idxNow = buffer->IdxBuffer;
+			//Is Last one?
+			if (idxNow == buffer->pIHead)
+			{
+				I2Cx->CR1 |= I2C_CR1_STOP; //Stop
+			}
+			else
+			{
+				I2Cx->CR1 |= I2C_CR1_START; //Restart
+			}
+		}
+		else if (pData == idxNow->Data + idxNow->Len)
+		{
+			//Count next idxSct
+			idxNow = buffer->pITail + 1;
+			if (idxNow >= buffer->IdxBuffer + buffer->IdxSize)
+				idxNow = buffer->IdxBuffer;
+			buffer->pITail = idxNow;
+			//Set empty
+			if (buffer->pITail == buffer->pIHead)
+				buffer->IdxEmpty = 1;
+		}
+		/* * * * * * * * * * * * * * * * * *
+		 * WARNING:idxNow has been change  *
+		 * * * * * * * * * * * * * * * * * */
+		pData++;
+	}
+}
+//Auto restart handle
+void I2C_AutoStartHandle(I2C_BufferTypeDef *buffer)
+{
+	I2C_TypeDef *I2Cx = buffer->I2Cx;
+	uint8_t IS_SDA_LOW = 1;
+	//ReInit
+	if (buffer->ReTimes >= I2C_MAX_RETIMES)
+	{
+		I2Cx->CR1 |= I2C_CR1_SWRST;
+		buffer->ReTimes = 0;
+	}
+	if (I2Cx == I2C1)
+		IS_SDA_LOW = !(GPIO_I2C1_SDA->IDR & PIN_I2C1_SDA);
+	else if (I2Cx == I2C2)
+		IS_SDA_LOW = !(GPIO_I2C2_SDA->IDR & PIN_I2C2_SDA);
+	if (I2Cx->SR2 & I2C_SR2_BUSY && IS_SDA_LOW)
+		buffer->ReTimes++;
+
+	//If is empty
+	if (buffer->pIHead == buffer->pITail && buffer->IdxEmpty)
+		return;
+	//If is Busy Or Starting/Stoping
+	if (I2Cx->SR2 & I2C_SR2_BUSY || I2Cx->CR1 & (I2C_CR1_START | I2C_CR1_STOP))
+		return;
+
+	//Start I2C
+	I2C2->CR2 |= (I2C_CR2_ITBUFEN | I2C_CR2_ITEVTEN | I2C_CR2_ITERREN);
+	I2C2->CR1 |= I2C_CR1_START;
 }
 
 uint8_t I2C_TestWhileSTD(void)
