@@ -88,6 +88,7 @@ ErrorStatus I2C_ReadMem(I2C_BufferTypeDef *buffer, uint8_t addr, uint8_t reg, ui
 void I2C_BufsHandler(I2C_BufferTypeDef *buffer);
 //缓冲区自动重启服务函数 写入缓冲区后、定时执行
 void I2C_AutoStartHandle(I2C_BufferTypeDef *buffer);
+void I2C_TransEnable(I2C_BufferTypeDef *buffer);
 //Test
 uint8_t I2C_TestWhileREG(void);
 

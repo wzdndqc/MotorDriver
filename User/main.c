@@ -7,6 +7,7 @@
 #include "adc.h"
 #include "Driver/JY61.h"
 #include "i2c.h"
+#include "Driver/MPU6050.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -21,8 +22,8 @@ uint8_t bufStr2[256];
 char str[48];
 //I2C
 I2C_BufferTypeDef I2C_buffer2;
-I2C_IdxBuffer I2C_idxs2[4];
-uint8_t I2C_data2[8];
+I2C_IdxBuffer I2C_idxs2[5];
+uint8_t I2C_data2[256];
 ErrorStatus staTest;
 uint8_t dataTest;
 
@@ -43,8 +44,8 @@ int main(void)
 	int16_t add_step = 0;
 	SysTick_Config(SystemCoreClock / 1000);
 
-	// Clock_LED = 200;
-	// while(Clock_LED);
+	Clock_LED = 200;
+	while(Clock_LED);
 
 	GPIO_Config();
 
@@ -67,10 +68,13 @@ int main(void)
 	I2C_Config();
 
 	//TestBuffer
-	I2C_InitBuffer(&I2C_buffer2, I2C2, I2C_idxs2, sizeof(I2C_idxs2), I2C_data2, sizeof(I2C_data2));
+	I2C_InitBuffer(&I2C_buffer2, I2C2, I2C_idxs2, sizeof(I2C_idxs2)/sizeof(I2C_IdxBuffer), I2C_data2, sizeof(I2C_data2));
 	staTest = I2C_ReadMem(&I2C_buffer2, 0xD1, 0x75, &dataTest, 1 - 1);
-	staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, 0x74, (uint8_t[]){0,1,4}, 3 - 1);
-	staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, 0x74, (uint8_t *)"Fuck", 4 - 1);
+	// staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_PWR_MGMT_1, (uint8_t[]){0x00}, 1 - 1);
+	// staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_SMPLRT_DIV, (uint8_t[]){0x07}, 1 - 1);
+	// staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_CONFIG, (uint8_t[]){0x06}, 1 - 1);
+	// staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_ACCEL_CONFIG, (uint8_t[]){0x00}, 1 - 1);
+	// staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_GYRO_CONFIG, (uint8_t[]){0x00}, 1 - 1);
 	//staTest = I2C_ReadMem(&I2C_buffer2, 0xD1, 0x75, &dataTest, 1 - 1);
 	//I2C_TestWhileREG();
 

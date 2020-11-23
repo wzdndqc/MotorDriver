@@ -163,6 +163,22 @@
           <ExecCommand></ExecCommand>
           <Expression>\\MotorDriver\../User/stm32f10x_it.c\67</Expression>
         </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>71</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134231562</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>P:\姣旇禌\鐢靛瓙璁捐绔炶禌\MotorDriver\STM32\STD\User\main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\MotorDriver\../User/main.c\71</Expression>
+        </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>

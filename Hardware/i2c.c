@@ -72,6 +72,22 @@ void I2C_Config(void)
 	I2C_Init(I2C2, &I2C_InitStructure);
 	I2C_Cmd(I2C2, ENABLE);
 }
+//Enable transmit
+void I2C_TransEnable(I2C_BufferTypeDef *buffer)
+{
+	I2C_TypeDef *I2Cx = buffer->I2Cx;
+
+	//If is empty
+	if (buffer->pIHead == buffer->pITail && buffer->IdxEmpty)
+		return;
+	//If is Busy Or Starting/Stoping
+	if (I2Cx->SR2 & I2C_SR2_BUSY || I2Cx->CR1 & (I2C_CR1_START | I2C_CR1_STOP))
+		return;
+
+	//Start I2C
+	I2C2->CR2 |= (I2C_CR2_ITBUFEN | I2C_CR2_ITEVTEN | I2C_CR2_ITERREN);
+	I2C2->CR1 |= I2C_CR1_START;
+}
 
 //Write
 ErrorStatus I2C_WriteBuffer(I2C_BufferTypeDef *buffer, uint8_t addr, uint8_t reg, uint8_t *datas, uint8_t len_1)
@@ -138,7 +154,7 @@ ErrorStatus I2C_WriteBuffer(I2C_BufferTypeDef *buffer, uint8_t addr, uint8_t reg
 		buffer->IdxEmpty = 0;
 
 	//Enable EV ER IT
-	I2C_AutoStartHandle(buffer);
+	I2C_TransEnable(buffer);
 
 	//ENABLE IT
 	buffer->I2Cx->CR2 |= (I2C_CR2_ITERREN | I2C_CR2_ITEVTEN);
@@ -176,7 +192,7 @@ ErrorStatus I2C_ReadMem(I2C_BufferTypeDef *buffer, uint8_t addr, uint8_t reg, ui
 		buffer->IdxEmpty = 0;
 
 	//Enable EV ER IT
-	I2C_AutoStartHandle(buffer);
+	I2C_TransEnable(buffer);
 
 	//ENABLE IT
 	buffer->I2Cx->CR2 |= (I2C_CR2_ITERREN | I2C_CR2_ITEVTEN);
@@ -344,6 +360,7 @@ void I2C_BufsHandler(I2C_BufferTypeDef *buffer)
 		 * * * * * * * * * * * * * * * * * */
 		pData++;
 	}
+	buffer->ReTimes = 0;
 }
 //Auto restart handle
 void I2C_AutoStartHandle(I2C_BufferTypeDef *buffer)

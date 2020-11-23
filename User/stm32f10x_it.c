@@ -147,6 +147,8 @@ void SysTick_Handler(void)
     Clock_LED--;
   if (Clock_Mtr)
     Clock_Mtr--;
+  // if (I2C_buffer2.I2Cx->CR2 & I2C_CR2_ITEVTEN)
+    // I2C_AutoStartHandle(&I2C_buffer2);
 }
 
 /******************************************************************************/
