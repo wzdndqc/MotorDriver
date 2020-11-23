@@ -209,6 +209,8 @@ void I2C_BufsHandler(I2C_BufferTypeDef *buffer)
 	uint8_t *pData;
 	uint32_t SR, SR2;
 
+	buffer->ReTimes = 0;
+
 	//Get flags
 	SR = I2Cx->SR1;
 	SR2 = I2Cx->SR2;
@@ -360,7 +362,6 @@ void I2C_BufsHandler(I2C_BufferTypeDef *buffer)
 		 * * * * * * * * * * * * * * * * * */
 		pData++;
 	}
-	buffer->ReTimes = 0;
 }
 //Auto restart handle
 void I2C_AutoStartHandle(I2C_BufferTypeDef *buffer)

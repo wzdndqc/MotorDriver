@@ -22,7 +22,7 @@ uint8_t bufStr2[256];
 char str[48];
 //I2C
 I2C_BufferTypeDef I2C_buffer2;
-I2C_IdxBuffer I2C_idxs2[5];
+I2C_IdxBuffer I2C_idxs2[16];
 uint8_t I2C_data2[256];
 ErrorStatus staTest;
 uint8_t dataTest;
@@ -70,12 +70,12 @@ int main(void)
 	//TestBuffer
 	I2C_InitBuffer(&I2C_buffer2, I2C2, I2C_idxs2, sizeof(I2C_idxs2)/sizeof(I2C_IdxBuffer), I2C_data2, sizeof(I2C_data2));
 	staTest = I2C_ReadMem(&I2C_buffer2, 0xD1, 0x75, &dataTest, 1 - 1);
-	// staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_PWR_MGMT_1, (uint8_t[]){0x00}, 1 - 1);
-	// staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_SMPLRT_DIV, (uint8_t[]){0x07}, 1 - 1);
-	// staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_CONFIG, (uint8_t[]){0x06}, 1 - 1);
-	// staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_ACCEL_CONFIG, (uint8_t[]){0x00}, 1 - 1);
-	// staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_GYRO_CONFIG, (uint8_t[]){0x00}, 1 - 1);
-	//staTest = I2C_ReadMem(&I2C_buffer2, 0xD1, 0x75, &dataTest, 1 - 1);
+	staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_PWR_MGMT_1, (uint8_t[]){0x00}, 1 - 1);
+	staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_SMPLRT_DIV, (uint8_t[]){0x07}, 1 - 1);
+	staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_CONFIG, (uint8_t[]){0x06}, 1 - 1);
+	staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_ACCEL_CONFIG, (uint8_t[]){0x00}, 1 - 1);
+	staTest = I2C_WriteBuffer(&I2C_buffer2, 0xD0, REG_GYRO_CONFIG, (uint8_t[]){0x00}, 1 - 1);
+	// staTest = I2C_ReadMem(&I2C_buffer2, 0xD1, 0x75, &dataTest, 1 - 1);
 	//I2C_TestWhileREG();
 
 	//Start I2C
