@@ -72,11 +72,16 @@ typedef struct
 //最大自动复位模块计数(ms maybe)
 #define I2C_MAX_RETIMES 20
 #define GPIO_I2C2_SDA GPIOB
-#define PIN_I2C2_SDA GPIO_IDR_IDR11
+#define PIN_I2C2_SDA GPIO_Pin_11
+#define GPIO_I2C2_SCL GPIOB
+#define PIN_I2C2_SCL GPIO_Pin_10
 #define GPIO_I2C1_SDA GPIOB
-#define PIN_I2C1_SDA GPIO_IDR_IDR9//Remap
+#define PIN_I2C1_SDA GPIO_Pin_9//Remap
+#define GPIO_I2C1_SCL GPIOB
+#define PIN_I2C1_SCL GPIO_Pin_8//Remap
 
 //Fun
+//I2C2初始化函数
 void I2C_Config(void);
 //缓冲区初始化函数
 void I2C_InitBuffer(I2C_BufferTypeDef *buffer, I2C_TypeDef *I2Cx, I2C_IdxBuffer *idxBufs, uint16_t idxSize, uint8_t *dataBufs, uint16_t dataSize);

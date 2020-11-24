@@ -265,6 +265,7 @@ void I2C_BufsHandler(I2C_BufferTypeDef *buffer)
 			{
 				I2Cx->CR1 |= I2C_CR1_START; //Restart
 			}
+			I2Cx->CR2 |= I2C_CR2_ITBUFEN;
 		}
 		I2Cx->DR = 0x00;
 	}
@@ -360,25 +361,60 @@ void I2C_BufsHandler(I2C_BufferTypeDef *buffer)
 		/* * * * * * * * * * * * * * * * * *
 		 * WARNING:idxNow has been change  *
 		 * * * * * * * * * * * * * * * * * */
-		pData++;
+		buffer->pData++;
 	}
 }
 //Auto restart handle
 void I2C_AutoStartHandle(I2C_BufferTypeDef *buffer)
 {
 	I2C_TypeDef *I2Cx = buffer->I2Cx;
-	uint8_t IS_SDA_LOW = 1;
+	GPIO_TypeDef *GPIO_SCL;
+	GPIO_TypeDef *GPIO_SDA;
+	uint16_t PIN_SCL;
+	uint16_t PIN_SDA;
+	GPIO_InitTypeDef GPIO_InitStructure;
+	if (I2Cx == I2C1)
+	{
+		GPIO_SCL = GPIO_I2C1_SCL;
+		PIN_SCL = PIN_I2C1_SCL;
+		GPIO_SDA = GPIO_I2C1_SDA;
+		PIN_SDA = PIN_I2C1_SDA;
+	}
+	else if (I2Cx == I2C2)
+	{
+		GPIO_SCL = GPIO_I2C2_SCL;
+		PIN_SCL = PIN_I2C2_SCL;
+		GPIO_SDA = GPIO_I2C2_SDA;
+		PIN_SDA = PIN_I2C2_SDA;
+	}
+	if (!buffer->I2Cx->CR2 & I2C_CR2_ITEVTEN)
+		return;
 	//ReInit
 	if (buffer->ReTimes >= I2C_MAX_RETIMES)
 	{
-		I2Cx->CR1 |= I2C_CR1_SWRST;
+		if (!(GPIO_SCL->IDR & PIN_SCL))
+			I2Cx->CR1 |= I2C_CR1_SWRST;
+		else if (!(GPIO_SDA->IDR & PIN_SDA))
+		{
+			I2Cx->CR1 &= ~I2C_CR1_PE;
+			GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+			GPIO_InitStructure.GPIO_Pin = PIN_SCL;
+			GPIO_Init(GPIO_SCL, &GPIO_InitStructure);
+			GPIO_InitStructure.GPIO_Pin = PIN_SDA;
+			GPIO_Init(GPIO_SDA, &GPIO_InitStructure);
+
+			while(!(GPIO_SDA->IDR & PIN_SDA))
+			{
+				GPIO_SCL->BRR = PIN_SCL;
+				GPIO_SDA->BRR = PIN_SDA;
+				GPIO_SCL->BSRR = PIN_SCL;
+				GPIO_SDA->BSRR = PIN_SDA;
+			}
+		}
 		buffer->ReTimes = 0;
 	}
-	if (I2Cx == I2C1)
-		IS_SDA_LOW = !(GPIO_I2C1_SDA->IDR & PIN_I2C1_SDA);
-	else if (I2Cx == I2C2)
-		IS_SDA_LOW = !(GPIO_I2C2_SDA->IDR & PIN_I2C2_SDA);
-	if (I2Cx->SR2 & I2C_SR2_BUSY && IS_SDA_LOW)
+	if (I2Cx->SR2 & I2C_SR2_BUSY || !(GPIO_SDA->IDR & PIN_SDA))
 		buffer->ReTimes++;
 
 	//If is empty

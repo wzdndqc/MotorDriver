@@ -26,6 +26,8 @@ I2C_IdxBuffer I2C_idxs2[16];
 uint8_t I2C_data2[256];
 ErrorStatus staTest;
 uint8_t dataTest;
+MPU_Datas angleDataR;
+MPU_Datas angleData;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -101,6 +103,15 @@ int main(void)
 			//Uart print to USART2
 			sprintf(str, "ADC1:%05d\r\n", ADC_Value1);
 			Uart_SendString(&buffer2, str);
+			//Get MPU
+			((uint8_t *)&angleData)[0] = ((uint8_t *)&angleDataR)[1];
+			((uint8_t *)&angleData)[1] = ((uint8_t *)&angleDataR)[0];
+			((uint8_t *)&angleData)[2] = ((uint8_t *)&angleDataR)[3];
+			((uint8_t *)&angleData)[3] = ((uint8_t *)&angleDataR)[2];
+			((uint8_t *)&angleData)[4] = ((uint8_t *)&angleDataR)[5];
+			((uint8_t *)&angleData)[5] = ((uint8_t *)&angleDataR)[4];
+			I2C_ReadMem(&I2C_buffer2, 0xD1, REG_ACCEL_XOUT_H, (uint8_t *)&angleDataR, 6 - 1);
+			I2C_ReadMem(&I2C_buffer2, 0xD1, REG_GYRO_XOUT_H, (uint8_t *)(&angleDataR.Gx), 6 - 1);
 		}
 		if (Clock_LED == 0)
 		{
